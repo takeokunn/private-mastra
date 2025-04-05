@@ -31,8 +31,6 @@ type PrFileInfo = {
   deletions: number;
 };
 
-// Error types are now distinguished by the message prefix, e.g., "[InvalidUrl]"
-
 /**
  * GitHub PR URL を解析し、owner, repo, pull number を抽出する。 */
 /**
@@ -64,7 +62,7 @@ const generateReportFilename = (): string => {
   const now = new Date();
   const timestamp = now.toISOString().replace(/[-:.]/g, "").slice(0, 14); // YYYYMMDDHHMMSS
   return `${timestamp}_pull_request.org`;
-}
+};
 
 /**
  * GitHub API から PR 詳細を取得する。
@@ -93,16 +91,11 @@ const getPrDetails = async (octokit: Octokit, parts: PrUrlParts): Promise<PrDeta
     };
   } catch (error) {
     console.error(`Error fetching PR details for ${parts.owner}/${parts.repo}#${parts.pull_number}:`, error);
-    throw new Error(`[GitHubApiError] Failed to fetch PR details for ${parts.owner}/${parts.repo}#${parts.pull_number}`);
+    throw new Error(
+      `[GitHubApiError] Failed to fetch PR details for ${parts.owner}/${parts.repo}#${parts.pull_number}`,
+    );
   }
 };
-    owner: parts.owner,
-    repo: parts.repo,
-    pull_number: parts.pull_number,
-    title: response.data.title,
-    body: response.data.body,
-    html_url: response.data.html_url,
-    base_sha: response.data.base.sha,
 
 /**
  * GitHub API から変更されたファイルリストを取得する。
@@ -131,11 +124,6 @@ const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<PrFileIn
     throw new Error(`[GitHubApiError] Failed to fetch PR files for ${parts.owner}/${parts.repo}#${parts.pull_number}`);
   }
 };
-    response.data.map((file) => ({
-      filename: file.filename,
-      status: file.status,
-      changes: file.changes,
-      additions: file.additions,
 
 /**
  * GitHub API から PR の差分 (diff) を取得する。
@@ -244,7 +232,7 @@ ${fileSummary || "変更されたファイルがないか、ファイルリス�
   - [ ] 詳細分析のためのリポジトリクローン/チェックアウトを実装。
   - [ ] 分析結果に基づいて Org Mode レポートの構造と内容を改善。
 `;
-}
+};
 
 /**
  * レポート内容をファイルに書き込む。
@@ -272,6 +260,7 @@ const writeReportToFile = async (reportContent: string, projectRoot: string): Pr
 
 /**
  * PR レビューツールを実行し、Org Mode レポートを生成する。
+ *
  * @param context ツール実行コンテキスト (prUrl を含む)。
  * @returns レポートファイルへの絶対パスを含むオブジェクト。
  * @throws GITHUB_TOKEN がない場合や API/ファイル書き込みエラー時に例外をスロー。
@@ -308,7 +297,6 @@ const executePrReview = async ({ context }: { context: { prUrl: string } }): Pro
     // 5. 成功した場合、レポートパスを返す
     console.log(`ツール実行成功。レポート: ${reportPath}`);
     return { reportPath };
-
   } catch (error) {
     // エラーハンドリング: 発生したエラーをログに出力し、再スロー
     console.error("ツール実行中にエラーが発生しました:", error);
@@ -317,7 +305,9 @@ const executePrReview = async ({ context }: { context: { prUrl: string } }): Pro
       throw error; // 元のエラーに有用な情報（メッセージプレフィックスなど）が含まれている場合はそのままスロー
     } else {
       // 予期しないエラータイプの場合
-      throw new Error(`[ToolExecutionError] PR レビューツールの実行中に予期しないエラーが発生しました: ${String(error)}`);
+      throw new Error(
+        `[ToolExecutionError] PR レビューツールの実行中に予期しないエラーが発生しました: ${String(error)}`,
+      );
     }
   }
 };
@@ -332,5 +322,5 @@ export const prReviewerTool = createTool({
   outputSchema: z.object({
     reportPath: z.string().describe("生成されたレビューレポートファイルへの絶対パス"),
   }),
-  execute: executePrReview
+  execute: executePrReview,
 });

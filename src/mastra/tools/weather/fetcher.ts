@@ -1,69 +1,6 @@
-import { createTool } from "@mastra/core/tools";
 import { match } from "ts-pattern";
-import { z } from "zod";
 
-/**
- * Open-Meteo Geocoding API のレスポンス型。
- * @see https://open-meteo.com/en/docs/geocoding-api
- */
-export type GeocodingResponse = {
-  results: {
-    latitude: number;
-    longitude: number;
-    name: string;
-  }[];
-};
-
-/**
- * Open-Meteo Weather API のレスポンス型。
- * @see https://open-meteo.com/en/docs
- */
-export type WeatherResponse = {
-  current: {
-    time: string;
-    temperature_2m: number;
-    apparent_temperature: number;
-    relative_humidity_2m: number;
-    wind_speed_10m: number;
-    wind_gusts_10m: number;
-    weather_code: number;
-  };
-};
-
-/**
- * weatherTool が返す整形された天気情報の型。
- */
-export type WeatherToolResponse = {
-  temperature: number;
-  feelsLike: number;
-  humidity: number;
-  windSpeed: number;
-  windGust: number;
-  conditions: string;
-  location: string;
-};
-
-/**
- * 指定された場所の現在の天気を取得する Mastra ツール。
- * Open-Meteo API を使用して位置情報を解決し、天気データを取得します。
- */
-export const weatherTool = createTool({
-  id: "get-weather",
-  description: "Get current weather for a location",
-  inputSchema: z.object({
-    location: z.string().describe("City name"),
-  }),
-  outputSchema: z.object({
-    temperature: z.number(),
-    feelsLike: z.number(),
-    humidity: z.number(),
-    windSpeed: z.number(),
-    windGust: z.number(),
-    conditions: z.string(),
-    location: z.string(),
-  }),
-  execute: async ({ context }): Promise<WeatherToolResponse> => await getWeather(context.location),
-});
+import type { GeocodingResponse, WeatherResponse, WeatherToolResponse } from "./types";
 
 /**
  * 指定された場所の天気情報を取得する内部ヘルパー関数。
@@ -73,7 +10,7 @@ export const weatherTool = createTool({
  * @returns 整形された天気情報を含む Promise。
  * @throws 場所が見つからない場合や API リクエストに失敗した場合にエラーをスローします。
  */
-const getWeather = async (location: string): Promise<WeatherToolResponse> => {
+export const getWeather = async (location: string): Promise<WeatherToolResponse> => {
   const geocodingUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`;
   const geocodingResponse = await fetch(geocodingUrl);
   const geocodingData = (await geocodingResponse.json()) as GeocodingResponse;

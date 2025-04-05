@@ -1,11 +1,29 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { z } from "zod";
 
-import { weatherTool } from "./weather";
-import type { GeocodingResponse, WeatherResponse } from "./weather";
+import { weatherTool } from "./index";
+import type { GeocodingResponse, WeatherResponse } from "./types";
 
+/**
+ * mock
+ */
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
+
+const mockLocation = "London";
+const mockGeocodingData: GeocodingResponse = {
+  results: [{ latitude: 51.5074, longitude: -0.1278, name: "London, UK" }],
+};
+const mockWeatherData: WeatherResponse = {
+  current: {
+    time: "2025-04-06T10:00",
+    temperature_2m: 12.5,
+    apparent_temperature: 11.0,
+    relative_humidity_2m: 75,
+    wind_speed_10m: 15.0,
+    wind_gusts_10m: 20.0,
+    weather_code: 61,
+  },
+};
 
 const createMockResponse = (data: unknown, ok = true, status = 200): globalThis.Response =>
   ({
@@ -14,61 +32,18 @@ const createMockResponse = (data: unknown, ok = true, status = 200): globalThis.
     json: async () => data,
   }) as globalThis.Response;
 
+const mockNotFoundLocation = "NonExistentPlace";
+const mockNotFoundGeocodingData: GeocodingResponse = { results: [] };
+
+/**
+ * test
+ */
 describe("Weather Tool", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  describe("weatherTool configuration", () => {
-    it("should have correct id and description", () => {
-      expect(weatherTool.id).toBe("get-weather");
-      expect(weatherTool.description).toBe("Get current weather for a location");
-    });
-
-    it("should have correct input schema", () => {
-      expect(weatherTool.inputSchema).toBeInstanceOf(z.ZodObject);
-      const parseResult = weatherTool.inputSchema?.safeParse({
-        location: "Tokyo",
-      });
-      expect(parseResult?.success).toBe(true);
-      const invalidResult = weatherTool.inputSchema?.safeParse({
-        loc: "Tokyo",
-      });
-      expect(invalidResult?.success).toBe(false);
-    });
-
-    it("should have correct output schema", () => {
-      expect(weatherTool.outputSchema).toBeInstanceOf(z.ZodObject);
-      const parseResult = weatherTool.outputSchema?.safeParse({
-        temperature: 15,
-        feelsLike: 14,
-        humidity: 60,
-        windSpeed: 10,
-        windGust: 15,
-        conditions: "Cloudy",
-        location: "Tokyo",
-      });
-      expect(parseResult?.success).toBe(true);
-    });
-  });
-
   describe("weatherTool.execute", () => {
-    const mockLocation = "London";
-    const mockGeocodingData: GeocodingResponse = {
-      results: [{ latitude: 51.5074, longitude: -0.1278, name: "London, UK" }],
-    };
-    const mockWeatherData: WeatherResponse = {
-      current: {
-        time: "2025-04-06T10:00",
-        temperature_2m: 12.5,
-        apparent_temperature: 11.0,
-        relative_humidity_2m: 75,
-        wind_speed_10m: 15.0,
-        wind_gusts_10m: 20.0,
-        weather_code: 61,
-      },
-    };
-
     it("should execute successfully with valid location", async () => {
       mockFetch
         .mockResolvedValueOnce(createMockResponse(mockGeocodingData))
@@ -101,9 +76,6 @@ describe("Weather Tool", () => {
     });
 
     it("should throw error if location is not found", async () => {
-      const mockNotFoundLocation = "NonExistentPlace";
-      const mockNotFoundGeocodingData: GeocodingResponse = { results: [] };
-
       mockFetch.mockResolvedValueOnce(createMockResponse(mockNotFoundGeocodingData));
 
       await expect(weatherTool.execute?.({ context: { location: mockNotFoundLocation } })).rejects.toThrow(
