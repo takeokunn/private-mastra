@@ -18,7 +18,8 @@
     "ts-pattern": "^5.2.0",
     "zod": "^3.24.2",
     "execa": "^9.3.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "neverthrow": "^6.2.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",

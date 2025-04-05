@@ -17,5 +17,5 @@ export const prReviewerAgent = new Agent({
 ツールが失敗した場合は、エラー内容をユーザーに分かりやすく報告します。
 `,
   model: google("gemini-1.5-pro-latest"),
-  tools: { prReviewerTool },
+  tools: { prReviewerTool }, // Tool instance remains the same, ID is internal to the tool definition
 });

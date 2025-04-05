@@ -2,8 +2,8 @@
 
 ## 概要
 
-`prReviewerAgent` は、指定された GitHub Pull Request (PR) の URL を受け取り、自動レビューを実行するように設計された Mastra エージェントです。
-内部的に `prReviewerTool` を使用して `scripts/review-pr.ts` スクリプトを実行し、レビュー結果を Org Mode 形式のレポートファイルとして生成します。
+`prReviewerAgent` は、指定された GitHub Pull Request (PR) の URL を受け取り、基本的なレビュー情報取得とレポート生成を行うように設計された Mastra エージェントです。
+内部的に `prReviewerTool` を使用して GitHub API から PR 情報を取得し、結果を Org Mode 形式のレポートファイルとして生成します。
 
 ## 目的
 
@@ -13,10 +13,11 @@
 ## 使用するツール
 
 *   **`prReviewerTool`**:
-    *   `scripts/review-pr.ts` スクリプトを実行します。
+    *   GitHub API を呼び出して PR の詳細、ファイルリスト、差分を取得します。
+    *   取得した情報に基づいて Org Mode レポートを生成し、ファイルに保存します。
     *   入力: GitHub PR の URL (`prUrl`)。
     *   出力: 生成された Org Mode レポートファイルの絶対パス (`reportPath`)。
-    *   詳細は `docs/mastra/tools/pr-reviewer.md` を参照してください (注: このファイルはまだ存在しません)。
+    *   詳細は `docs/mastra/tools/pr-reviewer.md` を参照してください。
 
 ## 使用例
 
@@ -43,6 +44,5 @@
 
 ## 依存関係
 
-*   `src/mastra/tools/pr-reviewer.ts`: `prReviewerTool` の実装。
-*   `scripts/review-pr.ts`: 実際のレビュー処理を行うスクリプト。
-*   環境変数 `GITHUB_TOKEN`: スクリプトが GitHub API にアクセスするために必要です。
+*   `src/mastra/tools/pr-reviewer.ts`: `prReviewerTool` の実装（GitHub API 連携とレポート生成ロジックを含む）。
+*   環境変数 `GITHUB_TOKEN`: `prReviewerTool` が GitHub API にアクセスするために必要です。
