@@ -169,12 +169,14 @@ index abc..def 100644
     const expectedOutputDir = path.join(MOCK_PROJECT_ROOT, ".output");
     const expectedOutputPath = path.join(expectedOutputDir, mockFilename);
 
-    beforeEach(() => {
+    // Use async beforeEach to allow await import
+    beforeEach(async () => {
       // Mock generateReportFilename specifically for this test suite
-      vi.spyOn(
-        await import("./output"), // Use dynamic import to spy on exported function
-        "generateReportFilename",
-      ).mockReturnValue(mockFilename);
+      // Need to import the module first to spy on its export
+      const outputModule = await import("./output");
+      vi.spyOn(outputModule, "generateReportFilename").mockReturnValue(
+        mockFilename,
+      );
     });
 
     it("should create directory and write report file successfully", async () => {
