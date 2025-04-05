@@ -100,3 +100,9 @@ function getWeatherCondition(code: number): string {
   };
   return conditions[code] || 'Unknown';
 }
+// Re-export weather tools
+export * from './weather';
+
+// Import and export GitHub tools
+import { githubTools } from './github';
+export const { getPullRequestDetails, getPullRequestDiff } = githubTools;

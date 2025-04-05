@@ -1,6 +1,7 @@
 import { google } from '@ai-sdk/google';
 import { Agent } from '@mastra/core/agent';
-import { weatherTool } from '../tools';
+// Import all necessary tools
+import { weatherTool, getPullRequestDetails, getPullRequestDiff } from '../tools';
 
 export const weatherAgent = new Agent({
   name: 'Weather Agent',
