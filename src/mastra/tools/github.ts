@@ -1,4 +1,4 @@
-import { tool, ToolExecutionContext } from '@ai-sdk/react'; // Import ToolExecutionContext
+import { createTool, ToolExecutionContext } from '@mastra/core/tools'; // Import createTool instead of tool
 import { z } from 'zod';
 import { Octokit } from '@octokit/rest';
 import { GetResponseDataTypeFromEndpointMethod } from "@octokit/types"; // Import type helper
@@ -49,10 +49,13 @@ export const githubTools = {
   /**
    * 特定のプルリクエストの詳細を取得します。
    */
-  getPullRequestDetails: tool({
+  getPullRequestDetails: createTool({
+    id: 'get-github-pull-request-details', // Add a unique ID for the tool
     description: 'GitHubプルリクエストの詳細（タイトル、説明、作成者、ブランチなど）を取得します。',
-    parameters: RepoInputSchema, // Use defined schema
-    execute: async ({ repository, pullRequestNumber }: RepoInput): Promise<PullRequestDetails> => { // Add parameter and return types
+    inputSchema: RepoInputSchema, // Rename parameters to inputSchema
+    outputSchema: PullRequestDetailsSchema, // Add outputSchema
+    execute: async ({ context }: ToolExecutionContext<RepoInput>): Promise<PullRequestDetails> => { // Update execute signature
+      const { repository, pullRequestNumber } = context; // Extract parameters from context
       if (!process.env.GITHUB_TOKEN) {
         console.warn('GITHUB_TOKEN環境変数が設定されていません。GitHub API呼び出しは失敗する可能性があります。');
         // Consider throwing an error for clearer failure handling
@@ -87,10 +90,13 @@ export const githubTools = {
   /**
    * 特定のプルリクエストの差分を取得します。
    */
-  getPullRequestDiff: tool({
+  getPullRequestDiff: createTool({
+    id: 'get-github-pull-request-diff', // Add a unique ID for the tool
     description: 'GitHubプルリクエストのコード変更（差分）を取得します。',
-    parameters: RepoInputSchema, // Use defined schema
-    execute: async ({ repository, pullRequestNumber }: RepoInput): Promise<PullRequestDiff> => { // Add parameter and return types
+    inputSchema: RepoInputSchema, // Rename parameters to inputSchema
+    outputSchema: PullRequestDiffSchema, // Add outputSchema
+    execute: async ({ context }: ToolExecutionContext<RepoInput>): Promise<PullRequestDiff> => { // Update execute signature
+       const { repository, pullRequestNumber } = context; // Extract parameters from context
        if (!process.env.GITHUB_TOKEN) {
         console.warn('GITHUB_TOKEN環境変数が設定されていません。GitHub API呼び出しは失敗する可能性があります。');
         // Consider throwing an error for clearer failure handling

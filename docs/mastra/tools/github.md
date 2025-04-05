@@ -4,7 +4,7 @@
 
 ## 概要
 
-AIエージェントと互換性のあるツールを定義するために `@ai-sdk/react` の `tool` 関数、パラメータ検証のために `zod`、GitHub API呼び出しを行うために `@octokit/rest` を利用します。
+AIエージェントと互換性のあるツールを定義するために `@mastra/core/tools` の `createTool` 関数、パラメータ検証のために `zod`、GitHub API呼び出しを行うために `@octokit/rest` を利用します。
 
 **重要:** これらのツールは、GitHub APIでの認証のために `GITHUB_TOKEN` 環境変数が設定されている必要があります。トークンが見つからない場合は警告がログに出力されます。
 
@@ -50,7 +50,7 @@ AIエージェントと互換性のあるツールを定義するために `@ai-
 
 ## 依存関係
 
-- `@ai-sdk/react`: `tool` 関数用。
+- `@mastra/core/tools`: `createTool` 関数用。
 - `zod`: スキーマ定義と検証用。
 - `@octokit/rest`: GitHub APIとの対話用。
 - `process.env.GITHUB_TOKEN`: 認証に必要な環境変数。
