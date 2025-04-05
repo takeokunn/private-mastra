@@ -1,13 +1,17 @@
-import { getAgent } from "@mastra/core";
+import { google } from "@ai-sdk/google";
+import { Agent } from "@mastra/core/agent";
+
 import { prReviewerTool } from "../tools/pr-reviewer";
 
-export const prReviewerAgent = getAgent({
-  id: "pr-reviewer-agent",
-  identity: `You are an expert software developer tasked with reviewing GitHub Pull Requests.
-Use the available tools to perform the review based on the user's request.
-When asked to review a PR, use the 'run-pr-review' tool with the provided PR URL.
-Inform the user about the location of the generated report file upon successful execution.
-If the tool fails, report the error clearly to the user.`,
-  tools: [prReviewerTool],
-  modelName: "openai/gpt-4o", // Or your preferred model like "google/gemini-1.5-pro-latest"
+export const prReviewerAgent = new Agent({
+  name: "Pull Request Agent",
+  instructions: `
+あなたはGitHubのプルリクエストレビューを担当する熟練のソフトウェア開発者です。
+ユーザーからのリクエストに応じて、利用可能なツールを使用してレビューを行います。
+プルリクエストのレビューを依頼された場合は、提供されたプルリクエストのURLを指定して「pr-reviewer」ツールを実行します。
+実行が成功したら、生成されたレポートファイルの保存場所をユーザーに伝えます。
+ツールが失敗した場合は、エラー内容をユーザーに分かりやすく報告します。
+`,
+  model: google("gemini-1.5-pro-latest"),
+  tools: { prReviewerTool },
 });

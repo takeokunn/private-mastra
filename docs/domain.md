@@ -12,7 +12,6 @@ https://mastra.ai/docs/getting-started/project-structure
 
 1.  **エージェント (Agents):**
     *   記憶（Memory）を持ち、ツール（Tools）を実行できるインテリジェントな AI エンティティ。
-    *   [`getAgent()`](https://mastra.ai/docs/reference/agents/getAgent) を使用して定義・取得します。
     *   ユーザーとの対話やタスクの実行が可能です。
     *   [エージェント概要](https://mastra.ai/docs/agents/overview)
 
@@ -42,7 +41,6 @@ https://mastra.ai/docs/getting-started/project-structure
 6.  **評価 (Evals):**
     *   LLM の出力品質を評価するためのフレームワーク。
     *   毒性、バイアス、関連性、事実の正確さなどの組み込みメトリクスや、カスタム評価を定義できます。
-    *   CI/CD パイプラインでの実行も可能です。
     *   [評価概要](https://mastra.ai/docs/evals/overview)
 
 7.  **音声 (Voice):**
@@ -52,7 +50,6 @@ https://mastra.ai/docs/getting-started/project-structure
 ## 開発プロセスとツール
 
 *   **ローカル開発環境:** `mastra dev` コマンドで起動し、開発中のエージェントと対話したり、状態やメモリを確認したりできます。 ([開発環境](https://mastra.ai/docs/local-dev/mastra-dev))
-*   **プロジェクト構造:** `mastra init` で生成される標準的なディレクトリ構造に従います。 ([プロジェクト構造](https://mastra.ai/docs/getting-started/project-structure))
 *   **モデルルーティング:** Vercel AI SDK を介して、複数の LLM プロバイダー（OpenAI, Anthropic, Google Gemini など）を統一的に扱います。
 *   **デプロイメント:** 作成したエージェントやワークフローを、既存の Node.js アプリケーションに組み込んだり、Hono ベースのサーバーとしてバンドルしたり、サーバーレスプラットフォーム（Vercel, Cloudflare Workers, Netlify）にデプロイしたりできます。 ([デプロイメント](https://mastra.ai/docs/deployment/deployment))
 *   **オブザーバビリティ:** ロギングとトレースを通じて、アプリケーションの動作を監視し、デバッグやパフォーマンス分析に役立てます。 ([オブザーバビリティ](https://mastra.ai/docs/observability/logging))
