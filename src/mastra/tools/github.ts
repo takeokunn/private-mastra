@@ -57,7 +57,6 @@ export const githubTools = {
         console.warn('GITHUB_TOKEN環境変数が設定されていません。GitHub API呼び出しは失敗する可能性があります。');
         // Consider throwing an error for clearer failure handling
         // throw new Error('GitHubトークンが設定されていません。');
-        // throw new Error('GitHubトークンが設定されていません。');
       }
       try {
         const { owner, repo }: ParsedRepo = parseRepoString(repository); // Add type annotation
@@ -95,7 +94,6 @@ export const githubTools = {
        if (!process.env.GITHUB_TOKEN) {
         console.warn('GITHUB_TOKEN環境変数が設定されていません。GitHub API呼び出しは失敗する可能性があります。');
         // Consider throwing an error for clearer failure handling
-        // throw new Error('GitHubトークンが設定されていません。');
         // throw new Error('GitHubトークンが設定されていません。');
       }
       try {
