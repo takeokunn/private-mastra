@@ -330,5 +330,5 @@ export const prReviewerTool = createTool({
   outputSchema: z.object({
     reportPath: z.string().describe("生成されたレビューレポートファイルへの絶対パス"),
   }),
-  execute: executePrReview, // 抽出した関数を呼び出す
+  execute: executePrReview
 });
