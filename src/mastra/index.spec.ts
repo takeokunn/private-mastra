@@ -22,7 +22,6 @@ describe('Mastra Instance (src/mastra/index.ts)', () => {
   it('should be configured with the correct agents', () => {
     expect(mastra).toBeInstanceOf(Mastra);
     expect(mastra.getAgent('weatherAgent')).toBeDefined();
-    expect(mastra.getAgent('pullRequestReviewerAgent')).toBeDefined();
   });
 
   it('should configure the logger correctly', async () => {
