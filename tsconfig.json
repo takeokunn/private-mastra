@@ -9,12 +9,12 @@
     "skipLibCheck": true,
     "outDir": "dist"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".mastra"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", ".mastra"],
+  "paths": {
+    "@/*": ["./src/mastra/*"],
+    "@/agents/*": ["./src/mastra/agents/*"],
+    "@/tools/*": ["./src/mastra/tools/*"],
+    "@/workflows/*": ["./src/mastra/workflows/*"]
+  }
 }

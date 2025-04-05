@@ -1,10 +1,10 @@
-import { google } from '@ai-sdk/google';
-import { Agent } from '@mastra/core/agent';
+import { google } from "@ai-sdk/google";
+import { Agent } from "@mastra/core/agent";
 
-import { weatherTool } from '../tools';
+import { weatherTool } from "../tools";
 
 export const weatherAgent = new Agent({
-  name: 'Weather Agent', // エージェント名は英語のままにします（識別子として）
+  name: "Weather Agent", // エージェント名は英語のままにします（識別子として）
   instructions: `
       あなたは正確な天気情報を提供する、役に立つ天気アシスタントです。
 
@@ -17,6 +17,6 @@ export const weatherAgent = new Agent({
 
       現在の天気データを取得するには、weatherToolを使用してください。
 `,
-  model: google('gemini-1.5-pro-latest'),
+  model: google("gemini-1.5-pro-latest"),
   tools: { weatherTool },
 });

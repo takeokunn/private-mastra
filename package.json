@@ -6,8 +6,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui --coverage.enabled=true",
-    "format": "biome format --write ."
-    "lint": "biome lint --apply .",
+    "format": "biome format --write src/",
     "dev": "mastra dev"
   },
   "dependencies": {

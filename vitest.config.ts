@@ -10,5 +10,5 @@ export default defineConfig({
       provider: 'v8', // or 'istanbul'
       reporter: ['text', 'json', 'html'],
     },
-  }
+  },
 });

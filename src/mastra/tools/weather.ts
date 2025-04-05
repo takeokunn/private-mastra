@@ -1,6 +1,6 @@
-import { createTool } from '@mastra/core/tools';
-import { z } from 'zod';
-import { match } from 'ts-pattern';
+import { createTool } from "@mastra/core/tools";
+import { match } from "ts-pattern";
+import { z } from "zod";
 
 export type GeocodingResponse = {
   results: {
@@ -8,7 +8,7 @@ export type GeocodingResponse = {
     longitude: number;
     name: string;
   }[];
-}
+};
 
 export type WeatherResponse = {
   current: {
@@ -20,7 +20,7 @@ export type WeatherResponse = {
     wind_gusts_10m: number;
     weather_code: number;
   };
-}
+};
 
 export type WeatherToolResponse = {
   temperature: number;
@@ -30,13 +30,13 @@ export type WeatherToolResponse = {
   windGust: number;
   conditions: string;
   location: string;
-}
+};
 
 export const weatherTool = createTool({
-  id: 'get-weather',
-  description: 'Get current weather for a location',
+  id: "get-weather",
+  description: "Get current weather for a location",
   inputSchema: z.object({
-    location: z.string().describe('City name'),
+    location: z.string().describe("City name"),
   }),
   outputSchema: z.object({
     temperature: z.number(),
@@ -79,32 +79,32 @@ const getWeather = async (location: string): Promise<WeatherToolResponse> => {
 
 const getWeatherCondition = (code: number): string =>
   match(code)
-    .with(0, () => 'Clear sky')
-    .with(1, () => 'Mainly clear')
-    .with(2, () => 'Partly cloudy')
-    .with(3, () => 'Overcast')
-    .with(45, () => 'Foggy')
-    .with(48, () => 'Depositing rime fog')
-    .with(51, () => 'Light drizzle')
-    .with(53, () => 'Moderate drizzle')
-    .with(55, () => 'Dense drizzle')
-    .with(56, () => 'Light freezing drizzle')
-    .with(57, () => 'Dense freezing drizzle')
-    .with(61, () => 'Slight rain')
-    .with(63, () => 'Moderate rain')
-    .with(65, () => 'Heavy rain')
-    .with(66, () => 'Light freezing rain')
-    .with(67, () => 'Heavy freezing rain')
-    .with(71, () => 'Slight snow fall')
-    .with(73, () => 'Moderate snow fall')
-    .with(75, () => 'Heavy snow fall')
-    .with(77, () => 'Snow grains')
-    .with(80, () => 'Slight rain showers')
-    .with(81, () => 'Moderate rain showers')
-    .with(82, () => 'Violent rain showers')
-    .with(85, () => 'Slight snow showers')
-    .with(86, () => 'Heavy snow showers')
-    .with(95, () => 'Thunderstorm')
-    .with(96, () => 'Thunderstorm with slight hail')
-    .with(99, () => 'Thunderstorm with heavy hail')
-    .otherwise(() => 'Unknown');
+    .with(0, () => "Clear sky")
+    .with(1, () => "Mainly clear")
+    .with(2, () => "Partly cloudy")
+    .with(3, () => "Overcast")
+    .with(45, () => "Foggy")
+    .with(48, () => "Depositing rime fog")
+    .with(51, () => "Light drizzle")
+    .with(53, () => "Moderate drizzle")
+    .with(55, () => "Dense drizzle")
+    .with(56, () => "Light freezing drizzle")
+    .with(57, () => "Dense freezing drizzle")
+    .with(61, () => "Slight rain")
+    .with(63, () => "Moderate rain")
+    .with(65, () => "Heavy rain")
+    .with(66, () => "Light freezing rain")
+    .with(67, () => "Heavy freezing rain")
+    .with(71, () => "Slight snow fall")
+    .with(73, () => "Moderate snow fall")
+    .with(75, () => "Heavy snow fall")
+    .with(77, () => "Snow grains")
+    .with(80, () => "Slight rain showers")
+    .with(81, () => "Moderate rain showers")
+    .with(82, () => "Violent rain showers")
+    .with(85, () => "Slight snow showers")
+    .with(86, () => "Heavy snow showers")
+    .with(95, () => "Thunderstorm")
+    .with(96, () => "Thunderstorm with slight hail")
+    .with(99, () => "Thunderstorm with heavy hail")
+    .otherwise(() => "Unknown");

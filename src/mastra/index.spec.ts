@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
-import { mastra } from './index';
-import { Mastra } from '@mastra/core/mastra';
-import { createLogger } from '@mastra/core/logger';
+import { createLogger } from "@mastra/core/logger";
+import { Mastra } from "@mastra/core/mastra";
+import { describe, expect, it, vi } from "vitest";
+import { mastra } from "./index";
 
-vi.mock('@mastra/core/logger', () => ({
+vi.mock("@mastra/core/logger", () => ({
   createLogger: vi.fn((config) => ({
     info: vi.fn(),
     warn: vi.fn(),
@@ -14,22 +14,22 @@ vi.mock('@mastra/core/logger', () => ({
   })),
 }));
 
-describe('Mastra Instance (src/mastra/index.ts)', () => {
-  it('should be an instance of Mastra', () => {
+describe("Mastra Instance (src/mastra/index.ts)", () => {
+  it("should be an instance of Mastra", () => {
     expect(mastra).toBeInstanceOf(Mastra);
   });
 
-  it('should be configured with the correct agents', () => {
+  it("should be configured with the correct agents", () => {
     expect(mastra).toBeInstanceOf(Mastra);
-    expect(mastra.getAgent('weatherAgent')).toBeDefined();
+    expect(mastra.getAgent("weatherAgent")).toBeDefined();
   });
 
-  it('should configure the logger correctly', async () => {
+  it("should configure the logger correctly", async () => {
     const mockedCreateLogger = vi.mocked(createLogger);
     expect(mockedCreateLogger).toHaveBeenCalledTimes(1);
     expect(mockedCreateLogger).toHaveBeenCalledWith({
-      name: 'Mastra',
-      level: 'info',
+      name: "Mastra",
+      level: "info",
     });
   });
 });
