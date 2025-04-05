@@ -5,10 +5,8 @@ import fs from "fs/promises";
 import path from "path";
 import { z } from "zod";
 
-// --- 定数 ---
-const OUTPUT_DIR = ".output"; // レポート出力ディレクトリ
+const OUTPUT_DIR = ".output";
 
-// --- 型定義 ---
 type PrUrlParts = {
   owner: string;
   repo: string;
@@ -40,23 +38,21 @@ type PrReviewError =
   | { type: "FileWriteError"; message: string; error?: unknown }
   | { type: "MissingToken"; message: string };
 
-// --- Helper Functions ---
-
 /**
- * GitHub PR URL を解析し、owner, repo, pull number を抽出する。
+ * GitHub PR URL を解析し、owner, repo, pull number を抽出する。 */
+/**
  * @param prUrl 解析対象の PR URL。
  * @returns 解析結果またはエラーを含む Result オブジェクト。
  */
 const parsePrUrl = (prUrl: string): Result<PrUrlParts, PrReviewError> => {
   const match = prUrl.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/);
-  // マッチしない場合は早期リターン
   if (!match) {
     return err({
       type: "InvalidUrl",
       message: "不正な PR URL フォーマットです。期待されるフォーマット: https://github.com/owner/repo/pull/number",
     });
   }
-  // マッチした場合は成功として返す
+
   return ok({
     owner: match[1],
     repo: match[2],
@@ -65,7 +61,8 @@ const parsePrUrl = (prUrl: string): Result<PrUrlParts, PrReviewError> => {
 };
 
 /**
- * レポート用のタイムスタンプ付きファイル名を生成する。
+ * レポート用のタイムスタンプ付きファイル名を生成する。 */
+/**
  * @returns 生成されたファイル名 (例: "20230101120000_pull_request.org")。
  */
 const generateReportFilename = (): string => {
@@ -76,6 +73,7 @@ const generateReportFilename = (): string => {
 
 /**
  * GitHub API から PR 詳細を取得する (Result 型でエラーハンドリング)。
+ *
  * @param octokit Octokit インスタンス。
  * @param parts 解析済みの PR URL 情報。
  * @returns PR 詳細またはエラーを含む Promise<Result>。
@@ -105,6 +103,7 @@ const getPrDetails = (octokit: Octokit, parts: PrUrlParts): Promise<Result<PrDet
 
 /**
  * GitHub API から変更されたファイルリストを取得する (Result 型を使用)。
+ *
  * @param octokit Octokit インスタンス。
  * @param parts 解析済みの PR URL 情報。
  * @returns ファイル情報配列またはエラーを含む Promise<Result>。
@@ -133,6 +132,7 @@ const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<Result<P
 
 /**
  * GitHub API から PR の差分 (diff) を取得する (Result 型を使用)。
+ *
  * @param octokit Octokit インスタンス。
  * @param parts 解析済みの PR URL 情報。
  * @returns diff 文字列またはエラーを含む Promise<Result>。
@@ -158,6 +158,7 @@ const getPrDiff = async (octokit: Octokit, parts: PrUrlParts): Promise<Result<st
 /**
  * Org Mode 形式のレビューレポートを生成する。
  * (静的解析とテスト結果は現時点ではプレースホルダー)
+ *
  * @param prDetails PR 詳細情報。
  * @param files 変更されたファイルの情報配列。
  * @param diff PR の差分文字列。
@@ -239,6 +240,7 @@ ${fileSummary || "No files changed or unable to fetch file list."}
 
 /**
  * レポート内容をファイルに書き込む (Result 型を使用)。
+ *
  * @param reportContent 書き込むレポート文字列。
  * @param projectRoot プロジェクトのルートディレクトリパス。
  * @returns 書き込まれたファイルの絶対パスまたはエラーを含む Promise<Result>。
@@ -258,8 +260,6 @@ const writeReportToFile = async (reportContent: string, projectRoot: string): Pr
     return err({ type: "FileWriteError", message: `レポートファイルの書き込みに失敗しました: ${outputPath}`, error });
   }
 }
-
-// --- Tool Definition ---
 
 export const prReviewerTool = createTool({
   id: "pr-reviewer", // Renamed from run-pr-review for clarity
