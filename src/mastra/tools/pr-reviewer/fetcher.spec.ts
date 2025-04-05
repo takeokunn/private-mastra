@@ -1,17 +1,15 @@
 import { Octokit } from "@octokit/rest";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 
 import { getPrDetails, getPrDiff, getPrFiles } from "./fetcher";
 import type { PrUrlParts } from "./types";
 
-// Mock Octokit
-// We only need to mock the methods we use: pulls.get and pulls.listFiles
 const mockOctokit = {
   pulls: {
     get: vi.fn(),
     listFiles: vi.fn(),
   },
-} as unknown as Octokit; // Type assertion for simplicity
+} as unknown as Octokit;
 
 const mockParts: PrUrlParts = {
   owner: "test-owner",
@@ -20,7 +18,6 @@ const mockParts: PrUrlParts = {
 };
 
 describe("PR Fetcher", () => {
-  // Reset mocks before each test
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -34,10 +31,9 @@ describe("PR Fetcher", () => {
           html_url: "https://github.com/test-owner/test-repo/pull/123",
           base: { sha: "base-sha-123" },
           head: { sha: "head-sha-456" },
-          // other fields omitted for brevity
         },
       };
-      mockOctokit.pulls.get.mockResolvedValue(mockResponse);
+      (mockOctokit.pulls.get as unknown as Mock).mockResolvedValue(mockResponse);
 
       const result = await getPrDetails(mockOctokit, mockParts);
 
@@ -60,7 +56,7 @@ describe("PR Fetcher", () => {
 
     it("should throw a specific error if fetching details fails", async () => {
       const apiError = new Error("API Error");
-      mockOctokit.pulls.get.mockRejectedValue(apiError);
+      (mockOctokit.pulls.get as unknown as Mock).mockRejectedValue(apiError);
 
       await expect(getPrDetails(mockOctokit, mockParts)).rejects.toThrow(
         "[GitHubApiError] Failed to fetch PR details for test-owner/test-repo#123",
@@ -93,7 +89,7 @@ describe("PR Fetcher", () => {
           },
         ],
       };
-      mockOctokit.pulls.listFiles.mockResolvedValue(mockResponse);
+      (mockOctokit.pulls.listFiles as unknown as Mock).mockResolvedValue(mockResponse);
 
       const result = await getPrFiles(mockOctokit, mockParts);
 
@@ -122,7 +118,7 @@ describe("PR Fetcher", () => {
 
     it("should throw a specific error if fetching files fails", async () => {
       const apiError = new Error("API Error");
-      mockOctokit.pulls.listFiles.mockRejectedValue(apiError);
+      (mockOctokit.pulls.listFiles as unknown as Mock).mockResolvedValue(apiError);
 
       await expect(getPrFiles(mockOctokit, mockParts)).rejects.toThrow(
         "[GitHubApiError] Failed to fetch PR files for test-owner/test-repo#123",
@@ -144,11 +140,7 @@ index e69de29..b5a7f7f 100644
 @@ -0,0 +1 @@
 +Hello World
 `;
-      // Mock the response for the diff format
-      // Note: The actual Octokit response structure might differ slightly,
-      // but the key is that the `data` property holds the diff string
-      // when the mediaType format is 'diff'.
-      mockOctokit.pulls.get.mockResolvedValue({ data: mockDiff });
+      (mockOctokit.pulls.get as unknown as Mock).mockResolvedValue({ data: mockDiff });
 
       const result = await getPrDiff(mockOctokit, mockParts);
 
@@ -165,7 +157,7 @@ index e69de29..b5a7f7f 100644
 
     it("should throw a specific error if fetching diff fails", async () => {
       const apiError = new Error("API Error");
-      mockOctokit.pulls.get.mockRejectedValue(apiError);
+      (mockOctokit.pulls.get as unknown as Mock).mockRejectedValue(apiError);
 
       await expect(getPrDiff(mockOctokit, mockParts)).rejects.toThrow(
         "[GitHubApiError] Failed to fetch PR diff for test-owner/test-repo#123",

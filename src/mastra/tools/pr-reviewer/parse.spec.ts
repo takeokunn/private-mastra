@@ -30,14 +30,6 @@ describe("parsePrUrl", () => {
       repo: "repo-name",
       pull_number: 789,
     };
-    // Note: The current regex doesn't explicitly handle 'www.', but it works because
-    // the regex starts matching from 'github.com'. If the regex were stricter,
-    // this test might need adjustment or the regex updated.
-    // Let's assume the current behavior is acceptable.
-    // If stricter matching is needed, the regex in parse.ts should be updated.
-    // For now, we test the current implementation's behavior.
-    // The current regex `github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)`
-    // doesn't care about `www.` before `github.com`.
     expect(parsePrUrl(url)).toEqual(expected);
   });
 

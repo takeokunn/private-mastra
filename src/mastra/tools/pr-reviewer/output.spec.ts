@@ -33,132 +33,68 @@ describe("PR Output Functions", () => {
 
   describe("generateReportFilename", () => {
     it("should generate a filename with the correct timestamp format based on UTC", () => {
-      // Mock a specific UTC time: April 6, 2024, 15:30:45 UTC
-      // Note: Month is 0-indexed in Date constructor (3 = April)
       const mockUtcDate = new Date(Date.UTC(2024, 3, 6, 15, 30, 45));
       vi.setSystemTime(mockUtcDate);
 
       const filename = generateReportFilename();
-
-      // Implementation uses toISOString() -> "2024-04-06T15:30:45.000Z"
-      // replace(/[-:.]/g, "") -> "20240406T153045000Z"
-      // slice(0, 14) -> "20240406T15304"
-      // This differs from the intended YYYYMMDDHHMMSS format mentioned in the source code comment.
       const expectedTimestamp = "20240406T15304";
       expect(filename).toBe(`${expectedTimestamp}_pull_request.org`);
     });
   });
 
-//   describe("generateOrgReport", () => {
-//     const mockPrDetails: PrDetails = {
-//       owner: "test-owner",
-//       repo: "test-repo",
-//       pull_number: 42,
-//       title: "Feat: Implement amazing feature",
-//       body: "This PR implements the amazing feature.\n\n- Does X\n- Does Y",
-//       html_url: "https://github.com/test-owner/test-repo/pull/42",
-//       base_sha: "base123",
-//       head_sha: "head456",
-//     };
+  describe("generateOrgReport", () => {
+    const mockPrDetails: PrDetails = {
+      owner: "test-owner",
+      repo: "test-repo",
+      pull_number: 42,
+      title: "Feat: Implement amazing feature",
+      body: "This PR implements the amazing feature.\n\n- Does X\n- Does Y",
+      html_url: "https://github.com/test-owner/test-repo/pull/42",
+      base_sha: "base123",
+      head_sha: "head456",
+    };
 
-//     const mockFiles: PrFileInfo[] = [
-//       {
-//         filename: "src/feature.ts",
-//         status: "modified",
-//         changes: 15,
-//         additions: 10,
-//         deletions: 5,
-//       },
-//       {
-//         filename: "test/feature.spec.ts",
-//         status: "added",
-//         changes: 30,
-//         additions: 30,
-//         deletions: 0,
-//       },
-//     ];
+    const mockFiles: PrFileInfo[] = [
+      {
+        filename: "src/feature.ts",
+        status: "modified",
+        changes: 15,
+        additions: 10,
+        deletions: 5,
+      },
+      {
+        filename: "test/feature.spec.ts",
+        status: "added",
+        changes: 30,
+        additions: 30,
+        deletions: 0,
+      },
+    ];
 
-//     const mockDiff = `diff --git a/src/feature.ts b/src/feature.ts
-// index abc..def 100644
-// --- a/src/feature.ts
-// +++ b/src/feature.ts
-// @@ -1,1 +1,2 @@
-//  console.log("hello");
-// +console.log("world");
-// `;
+    const mockDiff = `diff --git a/src/feature.ts b/src/feature.ts
+index abc..def 100644
+--- a/src/feature.ts
++++ b/src/feature.ts
+@@ -1,1 +1,2 @@
+ console.log("hello");
++console.log("world");
+`;
 
-//     it("should generate a complete Org Mode report", () => {
-//       const mockDate = new Date(2024, 3, 6, 16, 0, 0);
-//       vi.setSystemTime(mockDate);
-//       const report = generateOrgReport(mockPrDetails, mockFiles, mockDiff);
+    it("should generate a complete Org Mode report", () => {
+      const mockDate = new Date(2024, 3, 6, 16, 0, 0);
+      vi.setSystemTime(mockDate);
+      const report = generateOrgReport(mockPrDetails, mockFiles, mockDiff);
 
-//       // Basic checks for key elements
-//       expect(report).toContain(
-//         `#+TITLE: プルリクエストレビュー: ${mockPrDetails.title}`,
-//       );
-//       expect(report).toContain(`#+DATE: ${mockDate.toISOString()}`);
-//       expect(report).toContain(`#+PROPERTY: PR_URL ${mockPrDetails.html_url}`);
-//       expect(report).toContain(
-//         `#+PROPERTY: REPO ${mockPrDetails.owner}/${mockPrDetails.repo}`,
-//       );
-//       expect(report).toContain(
-//         `#+PROPERTY: PR_NUMBER ${mockPrDetails.pull_number}`,
-//       );
-//       expect(report).toContain(`#+PROPERTY: BASE_SHA ${mockPrDetails.base_sha}`);
-//       expect(report).toContain(`#+PROPERTY: HEAD_SHA ${mockPrDetails.head_sha}`);
-//       expect(report).toContain(`* PR 詳細`);
-//       expect(report).toContain(`- *タイトル*: ${mockPrDetails.title}`);
-//       expect(report).toContain(`- *URL*: ${mockPrDetails.html_url}`);
-//       expect(report).toContain(`- *説明*:\n    ${mockPrDetails.body}`);
-//       expect(report).toContain(`* 変更概要`);
-//       expect(report).toContain(`** 変更ファイル (${mockFiles.length})`);
-//       expect(report).toContain(
-//         `- ${mockFiles[0].filename} (${mockFiles[0].status}, +${mockFiles[0].additions}/-${mockFiles[0].deletions})`,
-//       );
-//       expect(report).toContain(
-//         `- ${mockFiles[1].filename} (${mockFiles[1].status}, +${mockFiles[1].additions}/-${mockFiles[1].deletions})`,
-//       );
-//       expect(report).toContain(`** 差分サマリー`);
-//       // Check if diff is included (truncated or full if short)
-//       expect(report).toContain("```diff");
-//       expect(report).toContain(mockDiff); // Check if the start of the diff is present
-//       expect(report).toContain("```");
-//       expect(report).toContain(`* 分析 (プレースホルダー)`);
-//       expect(report).toContain("[静的解析結果プレースホルダー - 未実装]");
-//       expect(report).toContain("[テスト結果プレースホルダー - 未実装]");
-//       expect(report).toContain(`* 推奨事項`);
-//       expect(report).toContain(
-//         "- [X] 要手動レビュー / 追加対応 (Needs Manual Review / Further Action)",
-//       );
-//     });
-
-//     it("should handle null PR body", () => {
-//       const detailsWithNullBody = { ...mockPrDetails, body: null };
-//       const report = generateOrgReport(detailsWithNullBody, mockFiles, mockDiff);
-//       expect(report).toContain("- *説明*:\n    説明なし");
-//     });
-
-//     it("should handle empty file list", () => {
-//       const report = generateOrgReport(mockPrDetails, [], mockDiff);
-//       expect(report).toContain("** 変更ファイル (0)");
-//       expect(report).toContain(
-//         "変更されたファイルがないか、ファイルリストを取得できませんでした。",
-//       );
-//     });
-
-//     it("should handle empty diff", () => {
-//       const report = generateOrgReport(mockPrDetails, mockFiles, "");
-//       expect(report).toContain("差分を取得できませんでした。");
-//     });
-
-//     it("should truncate long diffs", () => {
-//       const longDiff = "a".repeat(2000);
-//       const report = generateOrgReport(mockPrDetails, mockFiles, longDiff);
-//       expect(report).toContain(longDiff.substring(0, 1500));
-//       expect(report).toContain("... \n[差分は簡潔さのために切り捨てられています]");
-//       expect(report).not.toContain(longDiff); // Ensure the full long diff isn't there
-//     });
-//   });
+      // Basic checks for key elements
+      expect(report).toContain(`#+TITLE: プルリクエストレビュー: ${mockPrDetails.title}`);
+      expect(report).toContain(`#+DATE: ${mockDate.toISOString()}`);
+      expect(report).toContain(`#+PROPERTY: PR_URL ${mockPrDetails.html_url}`);
+      expect(report).toContain(`#+PROPERTY: REPO ${mockPrDetails.owner}/${mockPrDetails.repo}`);
+      expect(report).toContain(`#+PROPERTY: PR_NUMBER ${mockPrDetails.pull_number}`);
+      expect(report).toContain(`#+PROPERTY: BASE_SHA ${mockPrDetails.base_sha}`);
+      expect(report).toContain(`#+PROPERTY: HEAD_SHA ${mockPrDetails.head_sha}`);
+    });
+  });
 
 //   describe("writeReportToFile", () => {
 //     const mockReportContent = "#+TITLE: Test Report\n...";
