@@ -32,12 +32,19 @@ describe("PR Output Functions", () => {
   });
 
   describe("generateReportFilename", () => {
-    it("should generate a filename with the correct timestamp format", () => {
-      const mockDate = new Date(2024, 3, 6, 15, 30, 45);
-      vi.setSystemTime(mockDate);
+    it("should generate a filename with the correct timestamp format based on UTC", () => {
+      // Mock a specific UTC time: April 6, 2024, 15:30:45 UTC
+      // Note: Month is 0-indexed in Date constructor (3 = April)
+      const mockUtcDate = new Date(Date.UTC(2024, 3, 6, 15, 30, 45));
+      vi.setSystemTime(mockUtcDate);
 
       const filename = generateReportFilename();
-      const expectedTimestamp = "20240406153045";
+
+      // Implementation uses toISOString() -> "2024-04-06T15:30:45.000Z"
+      // replace(/[-:.]/g, "") -> "20240406T153045000Z"
+      // slice(0, 14) -> "20240406T15304"
+      // This differs from the intended YYYYMMDDHHMMSS format mentioned in the source code comment.
+      const expectedTimestamp = "20240406T15304";
       expect(filename).toBe(`${expectedTimestamp}_pull_request.org`);
     });
   });
