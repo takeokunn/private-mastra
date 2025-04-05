@@ -6,7 +6,7 @@ import path from "path";
 import { z } from "zod";
 
 // --- Constants ---
-const OUTPUT_DIR = ".claude/output";
+const OUTPUT_DIR = ".output";
 
 // --- Types ---
 interface PrUrlParts {
@@ -34,14 +34,18 @@ interface PrFileInfo {
   deletions: number;
 }
 
-type PrReviewError = { type: "InvalidUrl"; message: string } | { type: "GitHubApiError"; message: string; error?: unknown } | { type: "FileWriteError"; message: string; error?: unknown } | { type: "MissingToken"; message: string };
+type PrReviewError =
+  | { type: "InvalidUrl"; message: string }
+  | { type: "GitHubApiError"; message: string; error?: unknown }
+  | { type: "FileWriteError"; message: string; error?: unknown }
+  | { type: "MissingToken"; message: string };
 
 // --- Helper Functions ---
 
 /**
  * Parses the GitHub PR URL to extract owner, repo, and pull number.
  */
-function parsePrUrl(prUrl: string): Result<PrUrlParts, PrReviewError> {
+const parsePrUrl = (prUrl: string): Result<PrUrlParts, PrReviewError> => {
   const match = prUrl.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/);
   if (match) {
     return ok({
@@ -50,7 +54,10 @@ function parsePrUrl(prUrl: string): Result<PrUrlParts, PrReviewError> {
       pull_number: parseInt(match[3], 10),
     });
   }
-  return err({ type: "InvalidUrl", message: "Invalid PR URL format. Expected format: https://github.com/owner/repo/pull/number" });
+  return err({
+    type: "InvalidUrl",
+    message: "Invalid PR URL format. Expected format: https://github.com/owner/repo/pull/number",
+  });
 }
 
 /**
@@ -65,7 +72,7 @@ function generateReportFilename(): string {
 /**
  * Fetches PR details from GitHub API using Result for error handling.
  */
-async function getPrDetails(octokit: Octokit, parts: PrUrlParts): Promise<Result<PrDetails, PrReviewError>> {
+function getPrDetails(octokit: Octokit, parts: PrUrlParts): Promise<Result<PrDetails, PrReviewError>> {
   const promise = octokit.pulls.get({
     owner: parts.owner,
     repo: parts.repo,
@@ -235,7 +242,8 @@ async function writeReportToFile(reportContent: string, projectRoot: string): Pr
 
 export const prReviewerTool = createTool({
   id: "pr-reviewer", // Renamed from run-pr-review for clarity
-  description: "Fetches GitHub Pull Request information (details, files, diff) and generates a basic Org Mode review report.",
+  description:
+    "Fetches GitHub Pull Request information (details, files, diff) and generates a basic Org Mode review report.",
   inputSchema: z.object({
     prUrl: z.string().url().describe("The full URL of the GitHub Pull Request"),
   }),

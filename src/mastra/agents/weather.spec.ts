@@ -1,7 +1,7 @@
 import { Agent } from "@mastra/core/agent";
 import { describe, expect, it, vi } from "vitest";
 
-import { weatherTool } from "@/tools";
+import { weatherTool } from "../tools";
 import { weatherAgent } from "./weather";
 
 vi.mock("@ai-sdk/google", () => ({
@@ -13,7 +13,6 @@ describe("Weather Agent (src/mastra/agents/weather.ts)", () => {
     // Combined assertions
     expect(weatherAgent).toBeInstanceOf(Agent);
     expect(weatherAgent.name).toBe("Weather Agent");
-    // Check for Japanese instructions
     expect(weatherAgent.instructions).toContain("あなたは正確な天気情報を提供する、役に立つ天気アシスタントです。");
     expect(weatherAgent.instructions).toContain("場所が指定されていない場合は、必ず場所を尋ねてください。");
     expect(weatherAgent.instructions).toContain("現在の天気データを取得するには、weatherToolを使用してください。");

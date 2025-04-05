@@ -14,7 +14,7 @@ const createMockResponse = (data: unknown, ok = true, status = 200): globalThis.
     json: async () => data,
   }) as globalThis.Response;
 
-describe("Weather Tool (src/mastra/tools/weather.ts)", () => {
+describe("Weather Tool", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
