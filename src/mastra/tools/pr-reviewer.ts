@@ -168,73 +168,74 @@ const generateOrgReport = (prDetails: PrDetails, files: PrFileInfo[], diff: stri
   const reportDate = new Date().toISOString();
   const fileSummary = files.map((f) => `- ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})`).join("\n");
   const staticAnalysisResult = "[Static Analysis Results Placeholder - Not Implemented]";
-  const testResult = "[Test Results Placeholder - Not Implemented]";
+  const staticAnalysisResult = "[静的解析結果プレースホルダー - 未実装]";
+  const testResult = "[テスト結果プレースホルダー - 未実装]";
 
   return `
-#+TITLE: Pull Request Review: ${prDetails.title}
+#+TITLE: プルリクエストレビュー: ${prDetails.title}
 #+DATE: ${reportDate}
-#+AUTHOR: AI Review Assistant (via prReviewerTool)
+#+AUTHOR: AI レビューアシスタント (via prReviewerTool)
 #+PROPERTY: PR_URL ${prDetails.html_url}
 #+PROPERTY: REPO ${prDetails.owner}/${prDetails.repo}
 #+PROPERTY: PR_NUMBER ${prDetails.pull_number}
 #+PROPERTY: BASE_SHA ${prDetails.base_sha}
 #+PROPERTY: HEAD_SHA ${prDetails.head_sha}
 
-* Summary
+* サマリー
   :PROPERTIES:
-  :REVIEW_STATUS: NEEDS MANUAL REVIEW
+  :REVIEW_STATUS: 要手動レビュー (NEEDS MANUAL REVIEW)
   :END:
-  This report contains basic information fetched from the PR. Further analysis (code quality, tests, etc.) requires manual review or integration of additional tools.
+  このレポートには、PR から取得された基本情報が含まれています。詳細な分析（コード品質、テストなど）には、手動レビューまたは追加ツールの統合が必要です。
 
-* PR Details
-  - *Title*: ${prDetails.title}
+* PR 詳細
+  - *タイトル*: ${prDetails.title}
   - *URL*: ${prDetails.html_url}
-  - *Description*:
-    ${prDetails.body || "No description provided."}
+  - *説明*:
+    ${prDetails.body || "説明なし"}
 
-* Changes Overview
-** Changed Files (${files.length})
-${fileSummary || "No files changed or unable to fetch file list."}
+* 変更概要
+** 変更ファイル (${files.length})
+${fileSummary || "変更されたファイルがないか、ファイルリストを取得できませんでした。"}
 
-** Diff Summary
+** 差分サマリー
    \`\`\`diff
-   ${diff ? `${diff.substring(0, 1500)}... \n[Diff truncated for brevity]` : "Unable to fetch diff."}
+   ${diff ? `${diff.substring(0, 1500)}... \n[差分は簡潔さのために切り捨てられています]` : "差分を取得できませんでした。"}
    \`\`\`
 
-* Analysis (Placeholders)
-** Code Quality & Standards
-   - *Static Analysis*:
+* 分析 (プレースホルダー)
+** コード品質と規約
+   - *静的解析*:
      \`\`\`
      ${staticAnalysisResult}
      \`\`\`
-   - *Adherence to \`docs/rules.md\`*: [TODO: Analyze adherence to coding standards]
-   - *Readability & Maintainability*: [TODO: Assess code readability]
+   - *\`docs/rules.md\` 準拠*: [TODO: コーディング規約への準拠を分析]
+   - *可読性・保守性*: [TODO: コードの可読性を評価]
 
-** Functionality & Logic
-   - *Test Results*:
+** 機能性とロジック
+   - *テスト結果*:
      \`\`\`
      ${testResult}
      \`\`\`
-   - *Coverage*: [TODO: Extract and report test coverage]
-   - *Logic Review*: [TODO: Analyze core logic changes]
-   - *Edge Cases*: [TODO: Consider potential edge cases]
+   - *カバレッジ*: [TODO: テストカバレッジを抽出して報告]
+   - *ロジックレビュー*: [TODO: コアロジックの変更を分析]
+   - *エッジケース*: [TODO: 潜在的なエッジケースを考慮]
 
-** Documentation & Comments
-   - *TSDoc/Comments*: [TODO: Check for adequate documentation]
-   - *Related \`docs/domain.md\` Updates*: [TODO: Check if domain docs need updates]
+** ドキュメンテーションとコメント
+   - *TSDoc/コメント*: [TODO: 十分なドキュメントがあるか確認]
+   - *関連する \`docs/domain.md\` の更新*: [TODO: ドメインドキュメントの更新が必要か確認]
 
-* Recommendations
-  - [ ] Approve
-  - [X] Needs Manual Review / Further Action
-  - [ ] Request Changes
+* 推奨事項
+  - [ ] 承認 (Approve)
+  - [X] 要手動レビュー / 追加対応 (Needs Manual Review / Further Action)
+  - [ ] 変更要求 (Request Changes)
 
-  This automated report provides a starting point. Manual review is recommended.
+  この自動レポートは出発点を提供します。手動レビューを推奨します。
 
-* Next Steps (Tool Development)
-  - [ ] Integrate static analysis tool execution (e.g., Biome).
-  - [ ] Integrate test execution and coverage reporting (e.g., Vitest).
-  - [ ] Implement repository cloning/checkout for deeper analysis.
-  - [ ] Refine Org Mode report structure and content based on analysis results.
+* 次のステップ (ツール開発)
+  - [ ] 静的解析ツールの実行を統合 (例: Biome)。
+  - [ ] テスト実行とカバレッジレポートを統合 (例: Vitest)。
+  - [ ] 詳細分析のためのリポジトリクローン/チェックアウトを実装。
+  - [ ] 分析結果に基づいて Org Mode レポートの構造と内容を改善。
 `;
 }
 
