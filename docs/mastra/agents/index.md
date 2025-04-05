@@ -4,7 +4,7 @@
 
 ## 概要
 
-このファイルは、`./weather` と `./pullRequestReviewer` からそれぞれのエージェントをインポートし、それらを再エクスポートします。これにより、アプリケーションの他の部分からエージェントに簡単にアクセスできるようになります。
+このファイルは、`./weather` から `weatherAgent` をインポートし、再エクスポートします。これにより、アプリケーションの他の部分からエージェントに簡単にアクセスできるようになります。
 
 ## エクスポート
 
@@ -12,11 +12,6 @@
 
 `./weather` から再エクスポートされます。詳細は `docs/mastra/agents/weather.md` を参照してください。
 
-### `pullRequestReviewerAgent`
-
-`./pullRequestReviewer` から再エクスポートされます。詳細は `docs/mastra/agents/pullRequestReviewer.md` を参照してください。
-
 ## 依存関係
 
 - `./weather`: `weatherAgent` 用。
-- `./pullRequestReviewer`: `pullRequestReviewerAgent` 用。
