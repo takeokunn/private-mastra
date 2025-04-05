@@ -2,11 +2,11 @@ import { tool } from '@ai-sdk/react';
 import { z } from 'zod';
 import { Octokit } from '@octokit/rest';
 
-// Initialize Octokit
-// Ensure GITHUB_TOKEN environment variable is set for authentication
+// Octokitを初期化
+// 認証のためにGITHUB_TOKEN環境変数が設定されていることを確認
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
-// Helper function to parse owner and repo from repository string
+// リポジトリ文字列からownerとrepoを解析するヘルパー関数
 const parseRepoString = (repoString: string): { owner: string; repo: string } => {
   const parts = repoString.split('/');
   if (parts.length !== 2) {
@@ -17,19 +17,19 @@ const parseRepoString = (repoString: string): { owner: string; repo: string } =>
 
 export const githubTools = {
   /**
-   * Fetches details for a specific pull request.
+   * 特定のプルリクエストの詳細を取得します。
    */
   getPullRequestDetails: tool({
-    description: 'Get details of a GitHub pull request, like title, description, author, and branches.',
+    description: 'GitHubプルリクエストの詳細（タイトル、説明、作成者、ブランチなど）を取得します。',
     parameters: z.object({
-      repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
+      repository: z.string().describe('オーナー名とリポジトリ名 (例: "owner/repo")'),
       pullRequestNumber: z.number().describe('The number of the pull request'),
     }),
     execute: async ({ repository, pullRequestNumber }) => {
       if (!process.env.GITHUB_TOKEN) {
-        console.warn('GITHUB_TOKEN environment variable is not set. GitHub API calls will likely fail.');
-        // Optionally throw an error or return a specific message
-        // throw new Error('GitHub token not configured.');
+        console.warn('GITHUB_TOKEN環境変数が設定されていません。GitHub API呼び出しは失敗する可能性があります。');
+        // オプションでエラーをスローするか、特定のメッセージを返す
+        // throw new Error('GitHubトークンが設定されていません。');
       }
       try {
         const { owner, repo } = parseRepoString(repository);
@@ -41,33 +41,33 @@ export const githubTools = {
         });
         return {
           title: data.title,
-          description: data.body || 'No description provided.', // Handle null description
-          author: data.user?.login || 'Unknown author', // Handle potential null user
+          description: data.body || '説明はありません。', // nullの説明を処理
+          author: data.user?.login || '不明な作成者', // nullの可能性があるユーザーを処理
           baseBranch: data.base.ref,
           headBranch: data.head.ref,
         };
       } catch (error) {
-        console.error(`Error fetching PR details for ${repository}#${pullRequestNumber}:`, error);
-        // Re-throw or return a structured error object
-        throw new Error(`Failed to fetch details for PR ${repository}#${pullRequestNumber}. ${error instanceof Error ? error.message : String(error)}`);
+        console.error(`PR詳細の取得エラー ${repository}#${pullRequestNumber}:`, error);
+        // 再スローするか、構造化されたエラーオブジェクトを返す
+        throw new Error(`PR ${repository}#${pullRequestNumber} の詳細取得に失敗しました。 ${error instanceof Error ? error.message : String(error)}`);
       }
     },
   }),
 
   /**
-   * Fetches the diff for a specific pull request.
+   * 特定のプルリクエストの差分を取得します。
    */
   getPullRequestDiff: tool({
-    description: 'Get the code changes (diff) for a GitHub pull request.',
+    description: 'GitHubプルリクエストのコード変更（差分）を取得します。',
     parameters: z.object({
-      repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
+      repository: z.string().describe('オーナー名とリポジトリ名 (例: "owner/repo")'),
       pullRequestNumber: z.number().describe('The number of the pull request'),
     }),
     execute: async ({ repository, pullRequestNumber }) => {
        if (!process.env.GITHUB_TOKEN) {
-        console.warn('GITHUB_TOKEN environment variable is not set. GitHub API calls will likely fail.');
-        // Optionally throw an error or return a specific message
-        // throw new Error('GitHub token not configured.');
+        console.warn('GITHUB_TOKEN環境変数が設定されていません。GitHub API呼び出しは失敗する可能性があります。');
+        // オプションでエラーをスローするか、特定のメッセージを返す
+        // throw new Error('GitHubトークンが設定されていません。');
       }
       try {
         const { owner, repo } = parseRepoString(repository);
@@ -77,15 +77,15 @@ export const githubTools = {
           repo,
           pull_number: pullRequestNumber,
           mediaType: {
-            format: 'diff', // Request the diff format
+            format: 'diff', // diff形式をリクエスト
           },
         });
-        // The diff content is returned directly in the data field for this media type
+        // このメディアタイプの場合、差分コンテンツはdataフィールドに直接返されます
         return data as string;
       } catch (error) {
-        console.error(`Error fetching PR diff for ${repository}#${pullRequestNumber}:`, error);
-        // Re-throw or return a structured error object
-        throw new Error(`Failed to fetch diff for PR ${repository}#${pullRequestNumber}. ${error instanceof Error ? error.message : String(error)}`);
+        console.error(`PR差分の取得エラー ${repository}#${pullRequestNumber}:`, error);
+        // 再スローするか、構造化されたエラーオブジェクトを返す
+        throw new Error(`PR ${repository}#${pullRequestNumber} の差分取得に失敗しました。 ${error instanceof Error ? error.message : String(error)}`);
       }
     },
   }),

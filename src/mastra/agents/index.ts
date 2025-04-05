@@ -1,9 +1,9 @@
 import { google } from '@ai-sdk/google';
 import { Agent } from '@mastra/core/agent';
-// Import all necessary tools
-import { weatherTool } from '../tools'; // Keep weather tool import separate if needed elsewhere
+// 必要なツールをすべてインポート
+import { weatherTool } from '../tools'; // 他の場所で必要な場合は、weatherToolのインポートを分けておく
 
-// Import the new agent
+// 新しいエージェントをインポート
 import { pullRequestReviewerAgent } from './pullRequestReviewer';
 
 export const weatherAgent = new Agent({
@@ -24,5 +24,5 @@ export const weatherAgent = new Agent({
   tools: { weatherTool },
 });
 
-// Export the new agent
+// 新しいエージェントをエクスポート
 export { pullRequestReviewerAgent };

@@ -98,9 +98,9 @@ function getWeatherCondition(code: number): string {
     96: 'Thunderstorm with slight hail',
     99: 'Thunderstorm with heavy hail',
   };
-  return conditions[code] || 'Unknown';
+  return conditions[code] || '不明';
 }
 
-// Import and export GitHub tools
+// GitHubツールをインポートしてエクスポート
 import { githubTools } from './github';
 export const { getPullRequestDetails, getPullRequestDiff } = githubTools;
