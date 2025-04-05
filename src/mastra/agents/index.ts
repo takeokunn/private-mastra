@@ -1,7 +1,13 @@
 import { google } from '@ai-sdk/google';
 import { Agent } from '@mastra/core/agent';
 // Import all necessary tools
-import { weatherTool, getPullRequestDetails, getPullRequestDiff } from '../tools';
+import { google } from '@ai-sdk/google';
+import { Agent } from '@mastra/core/agent';
+// Import all necessary tools
+import { weatherTool } from '../tools'; // Keep weather tool import separate if needed elsewhere
+
+// Import the new agent
+import { pullRequestReviewerAgent } from './pullRequestReviewer';
 
 export const weatherAgent = new Agent({
   name: 'Weather Agent',
@@ -20,3 +26,6 @@ export const weatherAgent = new Agent({
   model: google('gemini-1.5-pro-latest'),
   tools: { weatherTool },
 });
+
+// Export the new agent
+export { pullRequestReviewerAgent };
