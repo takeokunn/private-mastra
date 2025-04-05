@@ -12,6 +12,11 @@
 
 `./weather` から再エクスポートされます。詳細は `docs/mastra/agents/weather.md` を参照してください。
 
+### `prReviewerAgent`
+
+`./pr-reviewer` から再エクスポートされます。詳細は `docs/mastra/agents/pr-reviewer.md` を参照してください。
+
 ## 依存関係
 
 - `./weather`: `weatherAgent` 用。
+- `./pr-reviewer`: `prReviewerAgent` 用。

@@ -3,6 +3,10 @@ import { Agent } from "@mastra/core/agent";
 
 import { prReviewerTool } from "../tools/pr-reviewer";
 
+/**
+ * An agent specialized in reviewing GitHub Pull Requests.
+ * It uses the `prReviewerTool` to execute a review script and report the results.
+ */
 export const prReviewerAgent = new Agent({
   name: "Pull Request Agent",
   instructions: `
