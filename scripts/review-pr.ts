@@ -6,12 +6,12 @@ import fs from "fs/promises";
 import path from "path";
 import simpleGit, { SimpleGit } from "simple-git";
 
-// Load environment variables from .env file
+// .env ファイルから環境変数を読み込む
 dotenv.config();
 
-// --- Types ---
+// --- 型定義 ---
 
-interface PrDetails {
+type PrDetails = {
   owner: string;
   repo: string;
   pull_number: number;
@@ -20,50 +20,52 @@ interface PrDetails {
   html_url: string;
   base_sha: string;
   head_sha: string;
-}
+};
 
-interface PrFileInfo {
+type PrFileInfo = {
   filename: string;
   status: string; // "added", "modified", "removed", etc.
   changes: number;
   additions: number;
   deletions: number;
-}
+};
 
-// --- Constants ---
-const OUTPUT_DIR = ".claude/output";
-const TEMP_CLONE_DIR = ".claude/temp_repo";
+// --- 定数 ---
+const OUTPUT_DIR = ".claude/output"; // レポート出力ディレクトリ
+const TEMP_CLONE_DIR = ".claude/temp_repo"; // 一時クローンディレクトリ
 
-// --- Helper Functions ---
+// --- ヘルパー関数 ---
 
 /**
- * Parses the GitHub PR URL to extract owner, repo, and pull number.
+ * GitHub PR URL を解析し、owner, repo, pull number を抽出する。
  */
-function parsePrUrl(prUrl: string): { owner: string; repo: string; pull_number: number } | null {
+const parsePrUrl = (prUrl: string): { owner: string; repo: string; pull_number: number } | null => {
   const match = prUrl.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/);
-  if (match) {
-    return {
-      owner: match[1],
-      repo: match[2],
-      pull_number: parseInt(match[3], 10),
-    };
+  // マッチしない場合は早期リターン
+  if (!match) {
+    return null;
   }
-  return null;
-}
+  // マッチした場合
+  return {
+    owner: match[1],
+    repo: match[2],
+    pull_number: parseInt(match[3], 10),
+  };
+};
 
 /**
- * Generates a timestamped filename for the report.
+ * レポート用のタイムスタンプ付きファイル名を生成する。
  */
-function generateReportFilename(): string {
+const generateReportFilename = (): string => {
   const now = new Date();
   const timestamp = now.toISOString().replace(/[-:.]/g, "").slice(0, 14); // YYYYMMDDHHMMSS
   return `${timestamp}_pull_request.org`;
 }
 
 /**
- * Fetches PR details from GitHub API.
+ * GitHub API から PR 詳細を取得する。
  */
-async function getPrDetails(octokit: Octokit, owner: string, repo: string, pull_number: number): Promise<PrDetails> {
+const getPrDetails = async (octokit: Octokit, owner: string, repo: string, pull_number: number): Promise<PrDetails> => {
   try {
     const { data: prData } = await octokit.pulls.get({
       owner,
@@ -87,9 +89,9 @@ async function getPrDetails(octokit: Octokit, owner: string, repo: string, pull_
 }
 
 /**
- * Fetches changed files list from GitHub API.
+ * GitHub API から変更されたファイルリストを取得する。
  */
-async function getPrFiles(octokit: Octokit, owner: string, repo: string, pull_number: number): Promise<PrFileInfo[]> {
+const getPrFiles = async (octokit: Octokit, owner: string, repo: string, pull_number: number): Promise<PrFileInfo[]> => {
     try {
         const { data: filesData } = await octokit.pulls.listFiles({
             owner,
@@ -110,9 +112,9 @@ async function getPrFiles(octokit: Octokit, owner: string, repo: string, pull_nu
 }
 
 /**
- * Fetches PR diff from GitHub API.
+ * GitHub API から PR の差分 (diff) を取得する。
  */
-async function getPrDiff(octokit: Octokit, owner: string, repo: string, pull_number: number): Promise<string> {
+const getPrDiff = async (octokit: Octokit, owner: string, repo: string, pull_number: number): Promise<string> => {
     try {
         const { data: diffData } = await octokit.pulls.get({
             owner,
@@ -122,71 +124,71 @@ async function getPrDiff(octokit: Octokit, owner: string, repo: string, pull_num
                 format: "diff",
             },
         });
-        // The type assertion is needed because the mediaType format changes the response type
+        // mediaType format がレスポンス型を変更するため、型アサーションが必要
         return diffData as unknown as string;
     } catch (error) {
-        console.error("Error fetching PR diff:", error);
+        console.error("PR diff の取得エラー:", error);
         throw new Error("Failed to fetch PR diff.");
     }
 }
 
 
 /**
- * Clones the repository and checks out the PR branches (Placeholder).
- * TODO: Implement actual git operations.
+ * リポジトリをクローンし、PR ブランチをチェックアウトする (プレースホルダー)。
+ * TODO: 実際の git 操作を実装する。
  */
-async function setupRepository(repoUrl: string, baseSha: string, headSha: string): Promise<SimpleGit> {
-  console.log(`[TODO] Cloning repository ${repoUrl} to ${TEMP_CLONE_DIR}`);
-  console.log(`[TODO] Checking out base SHA: ${baseSha} and head SHA: ${headSha}`);
-  // Placeholder: In a real implementation, use simple-git or execa here
-  // await fs.rm(TEMP_CLONE_DIR, { recursive: true, force: true });
-  // await fs.mkdir(TEMP_CLONE_DIR, { recursive: true });
+const setupRepository = async (repoUrl: string, baseSha: string, headSha: string): Promise<SimpleGit> => {
+  console.log(`[TODO] リポジトリ ${repoUrl} を ${TEMP_CLONE_DIR} にクローンします`);
+  console.log(`[TODO] ベース SHA: ${baseSha} とヘッド SHA: ${headSha} をチェックアウトします`);
+  // プレースホルダー: 実際の開発では simple-git や execa を使用
+  // await fs.rm(TEMP_CLONE_DIR, { recursive: true, force: true }); // 既存ディレクトリ削除
+  // await fs.mkdir(TEMP_CLONE_DIR, { recursive: true }); // ディレクトリ作成
   // const git: SimpleGit = simpleGit(TEMP_CLONE_DIR);
   // await git.clone(repoUrl, ".");
-  // await git.checkout(baseSha); // Or fetch PR refs
+  // await git.checkout(baseSha); // または PR ref をフェッチ
   // await git.checkout(headSha);
   // return git;
-  return simpleGit(); // Return dummy git instance for now
-}
+  return simpleGit(); // 現時点ではダミーの git インスタンスを返す
+};
 
 /**
- * Runs static analysis (Placeholder).
- * TODO: Implement biome check/lint execution.
+ * 静的解析を実行する (プレースホルダー)。
+ * TODO: biome check/lint の実行を実装する。
  */
-async function runStaticAnalysis(repoPath: string): Promise<string> {
-  console.log(`[TODO] Running static analysis (e.g., biome check) in ${repoPath}`);
-  // Placeholder: In a real implementation, use execa
+const runStaticAnalysis = async (repoPath: string): Promise<string> => {
+  console.log(`[TODO] 静的解析 (例: biome check) を ${repoPath} で実行します`);
+  // プレースホルダー: 実際の開発では execa を使用
   // try {
-  //   const { stdout } = await execa("biome", ["check", "--apply", "."], { cwd: repoPath });
-  //   return stdout;
+  //   const { stdout } = await execa("biome", ["check", "--apply", "."], { cwd: repoPath }); // biome コマンド実行
+  //   return stdout; // 結果を返す
   // } catch (error) {
-  //   console.warn("Static analysis command failed:", error);
-  //   return `Error running static analysis: ${error.stderr || error.message}`;
+  //   console.warn("静的解析コマンド失敗:", error);
+  //   return `静的解析の実行エラー: ${error.stderr || error.message}`;
   // }
-  return "[Static Analysis Results Placeholder]";
-}
+  return "[静的解析結果プレースホルダー]";
+};
 
 /**
- * Runs tests (Placeholder).
- * TODO: Implement test execution (e.g., npm run test).
+ * テストを実行する (プレースホルダー)。
+ * TODO: テスト実行 (例: npm run test) を実装する。
  */
-async function runTests(repoPath: string): Promise<string> {
-  console.log(`[TODO] Running tests (e.g., npm run test) in ${repoPath}`);
-  // Placeholder: In a real implementation, use execa
+const runTests = async (repoPath: string): Promise<string> => {
+  console.log(`[TODO] テスト (例: npm run test) を ${repoPath} で実行します`);
+  // プレースホルダー: 実際の開発では execa を使用
   // try {
-  //   const { stdout } = await execa("npm", ["run", "test"], { cwd: repoPath }); // Adjust command as needed
-  //   return stdout;
+  //   const { stdout } = await execa("npm", ["run", "test"], { cwd: repoPath }); // 必要に応じてコマンド調整
+  //   return stdout; // 結果を返す
   // } catch (error) {
-  //   console.warn("Test command failed:", error);
-  //   return `Error running tests: ${error.stderr || error.message}`;
+  //   console.warn("テストコマンド失敗:", error);
+  //   return `テストの実行エラー: ${error.stderr || error.message}`;
   // }
-  return "[Test Results Placeholder]";
-}
+  return "[テスト結果プレースホルダー]";
+};
 
 /**
- * Generates the review report in Org Mode format.
+ * Org Mode 形式のレビューレポートを生成する。
  */
-function generateOrgReport(prDetails: PrDetails, files: PrFileInfo[], diff: string, staticAnalysisResult: string, testResult: string): string {
+const generateOrgReport = (prDetails: PrDetails, files: PrFileInfo[], diff: string, staticAnalysisResult: string, testResult: string): string => {
   const reportDate = new Date().toISOString();
   const fileSummary = files.map(f => `- ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})`).join("\n");
 
@@ -262,26 +264,26 @@ ${fileSummary}
 }
 
 /**
- * Writes the report content to a file.
+ * レポート内容をファイルに書き込む。
  */
-async function writeReportToFile(reportContent: string): Promise<void> {
+const writeReportToFile = async (reportContent: string): Promise<void> => {
   const filename = generateReportFilename();
   const outputPath = path.join(OUTPUT_DIR, filename);
 
   try {
-    await fs.mkdir(OUTPUT_DIR, { recursive: true });
+    await fs.mkdir(OUTPUT_DIR, { recursive: true }); // 出力ディレクトリを作成 (存在してもOK)
     await fs.writeFile(outputPath, reportContent);
-    console.log(`Report successfully generated: ${outputPath}`);
+    console.log(`レポートが正常に生成されました: ${outputPath}`);
   } catch (error) {
-    console.error("Error writing report file:", error);
-    throw new Error("Failed to write report file.");
+    console.error("レポートファイルの書き込みエラー:", error);
+    throw new Error("レポートファイルの書き込みに失敗しました。");
   }
 }
 
 
-// --- Main Execution ---
+// --- メイン実行 ---
 
-async function main() {
+const main = async () => {
   program
     .name("pr-reviewer")
     .description("Analyzes a GitHub PR and generates an Org Mode review report.")
@@ -313,26 +315,26 @@ async function main() {
     const prFiles = await getPrFiles(octokit, owner, repo, pull_number);
     const prDiff = await getPrDiff(octokit, owner, repo, pull_number);
 
-    // --- Placeholders for advanced steps ---
+    // --- 高度なステップのプレースホルダー ---
     // const repoUrl = `https://github.com/${owner}/${repo}.git`;
     // const git = await setupRepository(repoUrl, prDetails.base_sha, prDetails.head_sha);
-    const repoPath = TEMP_CLONE_DIR; // Use this path once cloning is implemented
+    const repoPath = TEMP_CLONE_DIR; // クローン実装後にこのパスを使用
     const staticAnalysisResult = await runStaticAnalysis(repoPath);
     const testResult = await runTests(repoPath);
-    // --- End Placeholders ---
+    // --- プレースホルダー終了 ---
 
-    console.log("Generating Org Mode report...");
+    console.log("Org Mode レポートを生成中...");
     const reportContent = generateOrgReport(prDetails, prFiles, prDiff, staticAnalysisResult, testResult);
 
     await writeReportToFile(reportContent);
 
-    // TODO: Clean up temporary clone directory if implemented
+    // TODO: 実装した場合、一時クローンディレクトリをクリーンアップする
     // await fs.rm(TEMP_CLONE_DIR, { recursive: true, force: true });
 
   } catch (error) {
-    console.error("Script failed:", error.message || error);
+    console.error("スクリプト失敗:", error.message || error);
     process.exit(1);
   }
-}
+};
 
 main();
