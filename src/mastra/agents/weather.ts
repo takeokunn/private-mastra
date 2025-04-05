@@ -1,6 +1,6 @@
 import { google } from '@ai-sdk/google';
 import { Agent } from '@mastra/core/agent';
-import { weatherTool } from '../tools';
+import { weatherTool } from '../tools/weather'; // Import from the new file path
 
 export const weatherAgent = new Agent({
   name: 'Weather Agent',
