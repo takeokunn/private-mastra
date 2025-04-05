@@ -1,14 +1,15 @@
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
 
-interface GeocodingResponse {
+export type GeocodingResponse = {
   results: {
     latitude: number;
     longitude: number;
     name: string;
   }[];
 }
-interface WeatherResponse {
+
+export type WeatherResponse = {
   current: {
     time: string;
     temperature_2m: number;
@@ -18,6 +19,16 @@ interface WeatherResponse {
     wind_gusts_10m: number;
     weather_code: number;
   };
+}
+
+export type WeatherToolResponse = {
+  temperature: number;
+  feelsLike: number;
+  humidity: number;
+  windSpeed: number;
+  windGust: number;
+  conditions: string;
+  location: string;
 }
 
 export const weatherTool = createTool({
@@ -35,12 +46,10 @@ export const weatherTool = createTool({
     conditions: z.string(),
     location: z.string(),
   }),
-  execute: async ({ context }) => {
-    return await getWeather(context.location);
-  },
+  execute: async ({ context }): Promise<WeatherToolResponse> => await getWeather(context.location),
 });
 
-const getWeather = async (location: string) => {
+const getWeather = async (location: string): Promise<WeatherToolResponse> => {
   const geocodingUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`;
   const geocodingResponse = await fetch(geocodingUrl);
   const geocodingData = (await geocodingResponse.json()) as GeocodingResponse;
@@ -67,7 +76,7 @@ const getWeather = async (location: string) => {
   };
 };
 
-function getWeatherCondition(code: number): string {
+const getWeatherCondition = (code: number): string => {
   const conditions: Record<number, string> = {
     0: 'Clear sky',
     1: 'Mainly clear',

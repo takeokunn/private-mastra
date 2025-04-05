@@ -5,6 +5,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:ui": "vitest --ui --coverage.enabled=true",
     "dev": "mastra dev"
   },
   "dependencies": {
