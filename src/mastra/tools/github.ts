@@ -1,8 +1,19 @@
 import { tool } from '@ai-sdk/react';
 import { z } from 'zod';
+import { Octokit } from '@octokit/rest';
 
-// TODO: Implement GitHub API calls using a library like @octokit/rest
-// TODO: Handle authentication (e.g., using environment variables for GitHub token)
+// Initialize Octokit
+// Ensure GITHUB_TOKEN environment variable is set for authentication
+const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
+// Helper function to parse owner and repo from repository string
+const parseRepoString = (repoString: string): { owner: string; repo: string } => {
+  const parts = repoString.split('/');
+  if (parts.length !== 2) {
+    throw new Error(`Invalid repository format: ${repoString}. Expected "owner/repo".`);
+  }
+  return { owner: parts[0], repo: parts[1] };
+};
 
 export const githubTools = {
   /**
@@ -12,22 +23,35 @@ export const githubTools = {
     description: 'Get details of a GitHub pull request, like title, description, author, and branches.',
     parameters: z.object({
       repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
+      repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
       pullRequestNumber: z.number().describe('The number of the pull request'),
     }),
     execute: async ({ repository, pullRequestNumber }) => {
-      // Placeholder implementation - Replace with actual GitHub API call
-      console.log(`Fetching details for PR #${pullRequestNumber} in ${repository}`);
-      // Example: const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-      // const [owner, repo] = repository.split('/');
-      // const { data } = await octokit.pulls.get({ owner, repo, pull_number: pullRequestNumber });
-      // return { title: data.title, description: data.body, author: data.user.login, baseBranch: data.base.ref, headBranch: data.head.ref };
-      return {
-        title: `Placeholder Title for PR #${pullRequestNumber}`,
-        description: 'Placeholder description.',
-        author: 'placeholder-author',
-        baseBranch: 'main',
-        headBranch: 'feature-branch',
-      };
+      if (!process.env.GITHUB_TOKEN) {
+        console.warn('GITHUB_TOKEN environment variable is not set. GitHub API calls will likely fail.');
+        // Optionally throw an error or return a specific message
+        // throw new Error('GitHub token not configured.');
+      }
+      try {
+        const { owner, repo } = parseRepoString(repository);
+        console.log(`Fetching details for PR #${pullRequestNumber} in ${owner}/${repo}`);
+        const { data } = await octokit.pulls.get({
+          owner,
+          repo,
+          pull_number: pullRequestNumber,
+        });
+        return {
+          title: data.title,
+          description: data.body || 'No description provided.', // Handle null description
+          author: data.user?.login || 'Unknown author', // Handle potential null user
+          baseBranch: data.base.ref,
+          headBranch: data.head.ref,
+        };
+      } catch (error) {
+        console.error(`Error fetching PR details for ${repository}#${pullRequestNumber}:`, error);
+        // Re-throw or return a structured error object
+        throw new Error(`Failed to fetch details for PR ${repository}#${pullRequestNumber}. ${error instanceof Error ? error.message : String(error)}`);
+      }
     },
   }),
 
@@ -38,32 +62,33 @@ export const githubTools = {
     description: 'Get the code changes (diff) for a GitHub pull request.',
     parameters: z.object({
       repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
+      repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
       pullRequestNumber: z.number().describe('The number of the pull request'),
     }),
     execute: async ({ repository, pullRequestNumber }) => {
-      // Placeholder implementation - Replace with actual GitHub API call
-      console.log(`Fetching diff for PR #${pullRequestNumber} in ${repository}`);
-      // Example: const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-      // const [owner, repo] = repository.split('/');
-      // const { data } = await octokit.pulls.get({ owner, repo, pull_number: pullRequestNumber, mediaType: { format: 'diff' } });
-      // return data as string; // Diff content is usually returned as a string
-      return `
-diff --git a/file1.txt b/file1.txt
-index e69de29..ba1f233 100644
---- a/file1.txt
-+++ b/file1.txt
-@@ -0,0 +1 @@
-+This is a new line.
-diff --git a/file2.ts b/file2.ts
-index 5d8e7ae..bf10ff7 100644
---- a/file2.ts
-+++ b/file2.ts
-@@ -1,3 +1,4 @@
- console.log("Hello");
--// Removed line
-+console.log("World");
-+console.log("Added line");
-`;
+       if (!process.env.GITHUB_TOKEN) {
+        console.warn('GITHUB_TOKEN environment variable is not set. GitHub API calls will likely fail.');
+        // Optionally throw an error or return a specific message
+        // throw new Error('GitHub token not configured.');
+      }
+      try {
+        const { owner, repo } = parseRepoString(repository);
+        console.log(`Fetching diff for PR #${pullRequestNumber} in ${owner}/${repo}`);
+        const { data } = await octokit.pulls.get({
+          owner,
+          repo,
+          pull_number: pullRequestNumber,
+          mediaType: {
+            format: 'diff', // Request the diff format
+          },
+        });
+        // The diff content is returned directly in the data field for this media type
+        return data as string;
+      } catch (error) {
+        console.error(`Error fetching PR diff for ${repository}#${pullRequestNumber}:`, error);
+        // Re-throw or return a structured error object
+        throw new Error(`Failed to fetch diff for PR ${repository}#${pullRequestNumber}. ${error instanceof Error ? error.message : String(error)}`);
+      }
     },
   }),
 };
