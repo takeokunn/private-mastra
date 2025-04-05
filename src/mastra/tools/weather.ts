@@ -2,6 +2,10 @@ import { createTool } from "@mastra/core/tools";
 import { match } from "ts-pattern";
 import { z } from "zod";
 
+/**
+ * Open-Meteo Geocoding API のレスポンス型。
+ * @see https://open-meteo.com/en/docs/geocoding-api
+ */
 export type GeocodingResponse = {
   results: {
     latitude: number;
@@ -10,6 +14,10 @@ export type GeocodingResponse = {
   }[];
 };
 
+/**
+ * Open-Meteo Weather API のレスポンス型。
+ * @see https://open-meteo.com/en/docs
+ */
 export type WeatherResponse = {
   current: {
     time: string;
@@ -22,6 +30,9 @@ export type WeatherResponse = {
   };
 };
 
+/**
+ * weatherTool が返す整形された天気情報の型。
+ */
 export type WeatherToolResponse = {
   temperature: number;
   feelsLike: number;
@@ -32,6 +43,10 @@ export type WeatherToolResponse = {
   location: string;
 };
 
+/**
+ * 指定された場所の現在の天気を取得する Mastra ツール。
+ * Open-Meteo API を使用して位置情報を解決し、天気データを取得します。
+ */
 export const weatherTool = createTool({
   id: "get-weather",
   description: "Get current weather for a location",
@@ -50,6 +65,13 @@ export const weatherTool = createTool({
   execute: async ({ context }): Promise<WeatherToolResponse> => await getWeather(context.location),
 });
 
+/**
+ * 指定された場所の天気情報を取得する内部ヘルパー関数。
+ * Geocoding API で緯度経度を取得し、Weather API で天気情報を取得します。
+ * @param location 天気を取得する場所の名前 (例: "東京")。
+ * @returns 整形された天気情報を含む Promise。
+ * @throws 場所が見つからない場合や API リクエストに失敗した場合にエラーをスローします。
+ */
 const getWeather = async (location: string): Promise<WeatherToolResponse> => {
   const geocodingUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`;
   const geocodingResponse = await fetch(geocodingUrl);
@@ -77,6 +99,12 @@ const getWeather = async (location: string): Promise<WeatherToolResponse> => {
   };
 };
 
+/**
+ * Open-Meteo の天気コードを人間が読める形式の文字列に変換します。
+ * @param code 天気コード (WMO Weather interpretation codes)。
+ * @returns 天気の状態を表す文字列。
+ * @see https://open-meteo.com/en/docs#weathervariables
+ */
 const getWeatherCondition = (code: number): string =>
   match(code)
     .with(0, () => "Clear sky")
