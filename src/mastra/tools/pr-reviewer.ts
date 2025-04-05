@@ -1,6 +1,6 @@
 import { createTool } from "@mastra/core/tools";
 import { Octokit } from "@octokit/rest";
-import { Result, err, ok, fromPromise } from "neverthrow";
+import { Result, err, ok, fromPromise, ResultAsync } from "neverthrow";
 import fs from "fs/promises";
 import path from "path";
 import { z } from "zod";
@@ -78,14 +78,14 @@ const generateReportFilename = (): string => {
  * @param parts 解析済みの PR URL 情報。
  * @returns PR 詳細またはエラーを含む Promise<Result>。
  */
-const getPrDetails = (octokit: Octokit, parts: PrUrlParts): Promise<Result<PrDetails, PrReviewError>> => {
+const getPrDetails = async (octokit: Octokit, parts: PrUrlParts): Promise<ResultAsync<PrDetails, PrReviewError>> => {
   const promise = octokit.pulls.get({
     owner: parts.owner,
     repo: parts.repo,
     pull_number: parts.pull_number,
   });
 
-  return fromPromise(promise, (error) => ({
+  return fromPromise(promise, (error): PrReviewError => ({
     type: "GitHubApiError",
     message: `Failed to fetch PR details for ${parts.owner}/${parts.repo}#${parts.pull_number}`,
     error,
@@ -108,14 +108,14 @@ const getPrDetails = (octokit: Octokit, parts: PrUrlParts): Promise<Result<PrDet
  * @param parts 解析済みの PR URL 情報。
  * @returns ファイル情報配列またはエラーを含む Promise<Result>。
  */
-const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<Result<PrFileInfo[], PrReviewError>> => {
+const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<ResultAsync<PrFileInfo[], PrReviewError>> => {
   const promise = octokit.pulls.listFiles({
     owner: parts.owner,
     repo: parts.repo,
     pull_number: parts.pull_number,
   });
 
-  return fromPromise(promise, (error) => ({
+  return fromPromise(promise, (error): PrReviewError => ({
     type: "GitHubApiError",
     message: `Failed to fetch PR files for ${parts.owner}/${parts.repo}#${parts.pull_number}`,
     error,
@@ -147,8 +147,7 @@ const getPrDiff = async (octokit: Octokit, parts: PrUrlParts): Promise<Result<st
     },
   });
 
-  // mediaType format がレスポンス型を変更するため、型アサーションが必要
-  return fromPromise(promise, (error) => ({
+  return fromPromise(promise, (error): PrReviewError => ({
     type: "GitHubApiError",
     message: `PR diff の取得に失敗しました: ${parts.owner}/${parts.repo}#${parts.pull_number}`,
     error,
@@ -289,12 +288,13 @@ const executePrReview = async ({ context }: { context: { prUrl: string } }): Pro
       const diffResult = await getPrDiff(octokit, parts);
 
       // 結果を結合 - すべてのフェッチが成功した場合のみ続行
-      return Result.combine([detailsResult, filesResult, diffResult]).mapErr((errors) => {
-        // 必要であれば個々のエラーをログ記録し、簡潔さのために最初のエラーを返す
-        const firstError = errors[0];
-        console.error(`GitHub API エラー: ${firstError.message}`, firstError.error || "");
-        return firstError; // 最初に発生したエラーを伝播させる
-      });
+      return Result.combine([detailsResult, filesResult, diffResult])
+        .mapErr((errors) => {
+          // 必要であれば個々のエラーをログ記録し、簡潔さのために最初のエラーを返す
+          const firstError = errors[0];
+          console.error(`GitHub API エラー: ${firstError.message}`, firstError.error || "");
+          return firstError; // 最初に発生したエラーを伝播させる
+        });
     })
     .map(([prDetails, prFiles, prDiff]) => {
       console.log("Org Mode レポートを生成中...");

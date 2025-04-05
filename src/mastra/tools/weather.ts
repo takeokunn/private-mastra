@@ -68,6 +68,7 @@ export const weatherTool = createTool({
 /**
  * 指定された場所の天気情報を取得する内部ヘルパー関数。
  * Geocoding API で緯度経度を取得し、Weather API で天気情報を取得します。
+ *
  * @param location 天気を取得する場所の名前 (例: "東京")。
  * @returns 整形された天気情報を含む Promise。
  * @throws 場所が見つからない場合や API リクエストに失敗した場合にエラーをスローします。
@@ -101,6 +102,7 @@ const getWeather = async (location: string): Promise<WeatherToolResponse> => {
 
 /**
  * Open-Meteo の天気コードを人間が読める形式の文字列に変換します。
+ *
  * @param code 天気コード (WMO Weather interpretation codes)。
  * @returns 天気の状態を表す文字列。
  * @see https://open-meteo.com/en/docs#weathervariables
