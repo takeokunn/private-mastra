@@ -1,6 +1,5 @@
 import { createTool } from "@mastra/core/tools";
 import { Octokit } from "@octokit/rest";
-import { Result, err, ok, fromPromise, ResultAsync } from "neverthrow";
 import fs from "fs/promises";
 import path from "path";
 import { z } from "zod";
@@ -32,32 +31,28 @@ type PrFileInfo = {
   deletions: number;
 };
 
-type PrReviewError =
-  | { type: "InvalidUrl"; message: string }
-  | { type: "GitHubApiError"; message: string; error?: unknown }
-  | { type: "FileWriteError"; message: string; error?: unknown }
-  | { type: "MissingToken"; message: string };
+// Error types are now distinguished by the message prefix, e.g., "[InvalidUrl]"
 
 /**
  * GitHub PR URL を解析し、owner, repo, pull number を抽出する。 */
 /**
  * @param prUrl 解析対象の PR URL。
- * @returns 解析結果またはエラーを含む Result オブジェクト。
+ * @returns 解析された PR URL の構成要素。
+ * @throws {Error} 不正な URL フォーマットの場合。
  */
-const parsePrUrl = (prUrl: string): Result<PrUrlParts, PrReviewError> => {
+const parsePrUrl = (prUrl: string): PrUrlParts => {
   const match = prUrl.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/);
   if (!match) {
-    return err({
-      type: "InvalidUrl",
-      message: "不正な PR URL フォーマットです。期待されるフォーマット: https://github.com/owner/repo/pull/number",
-    });
+    throw new Error(
+      "[InvalidUrl] 不正な PR URL フォーマットです。期待されるフォーマット: https://github.com/owner/repo/pull/number",
+    );
   }
 
-  return ok({
+  return {
     owner: match[1],
     repo: match[2],
     pull_number: parseInt(match[3], 10),
-  });
+  };
 };
 
 /**
@@ -72,24 +67,35 @@ const generateReportFilename = (): string => {
 }
 
 /**
- * GitHub API から PR 詳細を取得する (Result 型でエラーハンドリング)。
+ * GitHub API から PR 詳細を取得する。
  *
  * @param octokit Octokit インスタンス。
  * @param parts 解析済みの PR URL 情報。
- * @returns PR 詳細またはエラーを含む Promise<Result>。
+ * @returns PR 詳細情報。
+ * @throws {Error} API 呼び出しに失敗した場合。
  */
-const getPrDetails = (octokit: Octokit, parts: PrUrlParts): ResultAsync<PrDetails, PrReviewError> => {
-  const promise = octokit.pulls.get({
-    owner: parts.owner,
-    repo: parts.repo,
-    pull_number: parts.pull_number,
-  });
-
-  return fromPromise(promise, (error): PrReviewError => ({
-    type: "GitHubApiError",
-    message: `Failed to fetch PR details for ${parts.owner}/${parts.repo}#${parts.pull_number}`,
-    error,
-  })).map((response) => ({
+const getPrDetails = async (octokit: Octokit, parts: PrUrlParts): Promise<PrDetails> => {
+  try {
+    const response = await octokit.pulls.get({
+      owner: parts.owner,
+      repo: parts.repo,
+      pull_number: parts.pull_number,
+    });
+    return {
+      owner: parts.owner,
+      repo: parts.repo,
+      pull_number: parts.pull_number,
+      title: response.data.title,
+      body: response.data.body,
+      html_url: response.data.html_url,
+      base_sha: response.data.base.sha,
+      head_sha: response.data.head.sha,
+    };
+  } catch (error) {
+    console.error(`Error fetching PR details for ${parts.owner}/${parts.repo}#${parts.pull_number}:`, error);
+    throw new Error(`[GitHubApiError] Failed to fetch PR details for ${parts.owner}/${parts.repo}#${parts.pull_number}`);
+  }
+};
     owner: parts.owner,
     repo: parts.repo,
     pull_number: parts.pull_number,
@@ -97,62 +103,65 @@ const getPrDetails = (octokit: Octokit, parts: PrUrlParts): ResultAsync<PrDetail
     body: response.data.body,
     html_url: response.data.html_url,
     base_sha: response.data.base.sha,
-    head_sha: response.data.head.sha,
-  }));
-}
 
 /**
- * GitHub API から変更されたファイルリストを取得する (Result 型を使用)。
+ * GitHub API から変更されたファイルリストを取得する。
  *
  * @param octokit Octokit インスタンス。
  * @param parts 解析済みの PR URL 情報。
- * @returns ファイル情報配列またはエラーを含む Promise<Result>。
+ * @returns ファイル情報の配列。
+ * @throws {Error} API 呼び出しに失敗した場合。
  */
-const getPrFiles = (octokit: Octokit, parts: PrUrlParts): ResultAsync<PrFileInfo[], PrReviewError> => {
-  const promise = octokit.pulls.listFiles({
-    owner: parts.owner,
-    repo: parts.repo,
-    pull_number: parts.pull_number,
-  });
-
-  return fromPromise(promise, (error): PrReviewError => ({
-    type: "GitHubApiError",
-    message: `Failed to fetch PR files for ${parts.owner}/${parts.repo}#${parts.pull_number}`,
-    error,
-  })).map((response) =>
-    response.data.map((file) => ({
+const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<PrFileInfo[]> => {
+  try {
+    const response = await octokit.pulls.listFiles({
+      owner: parts.owner,
+      repo: parts.repo,
+      pull_number: parts.pull_number,
+    });
+    return response.data.map((file) => ({
       filename: file.filename,
       status: file.status,
       changes: file.changes,
       additions: file.additions,
       deletions: file.deletions,
-    })),
-  );
-}
+    }));
+  } catch (error) {
+    console.error(`Error fetching PR files for ${parts.owner}/${parts.repo}#${parts.pull_number}:`, error);
+    throw new Error(`[GitHubApiError] Failed to fetch PR files for ${parts.owner}/${parts.repo}#${parts.pull_number}`);
+  }
+};
+    response.data.map((file) => ({
+      filename: file.filename,
+      status: file.status,
+      changes: file.changes,
+      additions: file.additions,
 
 /**
- * GitHub API から PR の差分 (diff) を取得する (Result 型を使用)。
+ * GitHub API から PR の差分 (diff) を取得する。
  *
  * @param octokit Octokit インスタンス。
  * @param parts 解析済みの PR URL 情報。
- * @returns diff 文字列またはエラーを含む Promise<Result>。
+ * @returns diff 文字列。
+ * @throws {Error} API 呼び出しに失敗した場合。
  */
-const getPrDiff = (octokit: Octokit, parts: PrUrlParts): ResultAsync<string, PrReviewError> => {
-  const promise = octokit.pulls.get({
-    owner: parts.owner,
-    repo: parts.repo,
-    pull_number: parts.pull_number,
-    mediaType: {
-      format: "diff",
-    },
-  });
-
-  return fromPromise(promise, (error): PrReviewError => ({
-    type: "GitHubApiError",
-    message: `PR diff の取得に失敗しました: ${parts.owner}/${parts.repo}#${parts.pull_number}`,
-    error,
-  })).map((response) => response.data as unknown as string);
-}
+const getPrDiff = async (octokit: Octokit, parts: PrUrlParts): Promise<string> => {
+  try {
+    const response = await octokit.pulls.get({
+      owner: parts.owner,
+      repo: parts.repo,
+      pull_number: parts.pull_number,
+      mediaType: {
+        format: "diff",
+      },
+    });
+    // mediaType format がレスポンス型を変更するため、型アサーションが必要
+    return response.data as unknown as string;
+  } catch (error) {
+    console.error(`Error fetching PR diff for ${parts.owner}/${parts.repo}#${parts.pull_number}:`, error);
+    throw new Error(`[GitHubApiError] Failed to fetch PR diff for ${parts.owner}/${parts.repo}#${parts.pull_number}`);
+  }
+};
 
 /**
  * Org Mode 形式のレビューレポートを生成する。
@@ -238,13 +247,14 @@ ${fileSummary || "変更されたファイルがないか、ファイルリス�
 }
 
 /**
- * レポート内容をファイルに書き込む (Result 型を使用)。
+ * レポート内容をファイルに書き込む。
  *
  * @param reportContent 書き込むレポート文字列。
  * @param projectRoot プロジェクトのルートディレクトリパス。
- * @returns 書き込まれたファイルの絶対パスまたはエラーを含む Promise<Result>。
+ * @returns 書き込まれたファイルの絶対パス。
+ * @throws {Error} ファイルの書き込みに失敗した場合。
  */
-const writeReportToFile = async (reportContent: string, projectRoot: string): Promise<Result<string, PrReviewError>> => {
+const writeReportToFile = async (reportContent: string, projectRoot: string): Promise<string> => {
   const filename = generateReportFilename();
   const outputDirPath = path.join(projectRoot, OUTPUT_DIR);
   const outputPath = path.join(outputDirPath, filename);
@@ -253,12 +263,12 @@ const writeReportToFile = async (reportContent: string, projectRoot: string): Pr
     await fs.mkdir(outputDirPath, { recursive: true }); // 出力ディレクトリを作成 (存在してもOK)
     await fs.writeFile(outputPath, reportContent);
     console.log(`レポートが正常に生成されました: ${outputPath}`);
-    return ok(outputPath); // 成功時はフルパスを返す
+    return outputPath; // 成功時はフルパスを返す
   } catch (error) {
-    console.error("レポートファイルの書き込みエラー:", error);
-    return err({ type: "FileWriteError", message: `レポートファイルの書き込みに失敗しました: ${outputPath}`, error });
+    console.error(`レポートファイルの書き込みエラー (${outputPath}):`, error);
+    throw new Error(`[FileWriteError] レポートファイルの書き込みに失敗しました: ${outputPath}`);
   }
-}
+};
 
 /**
  * PR レビューツールを実行し、Org Mode レポートを生成する。
@@ -268,53 +278,48 @@ const writeReportToFile = async (reportContent: string, projectRoot: string): Pr
  */
 const executePrReview = async ({ context }: { context: { prUrl: string } }): Promise<{ reportPath: string }> => {
   const githubToken = process.env.GITHUB_TOKEN;
-  // GITHUB_TOKEN がなければ早期リターン (エラー送出)
   if (!githubToken) {
-    const error: PrReviewError = { type: "MissingToken", message: "環境変数 GITHUB_TOKEN が設定されていません。" };
-    console.error(`ツール実行失敗: ${error.message}`);
-    // エージェントフレームワークに失敗を通知するためにエラーをスロー
-    throw new Error(error.message);
+    // GITHUB_TOKEN がなければエラーをスロー
+    console.error("ツール実行失敗: 環境変数 GITHUB_TOKEN が設定されていません。");
+    throw new Error("[MissingToken] 環境変数 GITHUB_TOKEN が設定されていません。");
   }
 
   const projectRoot = process.cwd();
   const octokit = new Octokit({ auth: githubToken });
 
-  // --- Chain of operations using Result ---
-  const result = await parsePrUrl(context.prUrl)
-    .asyncAndThen(
-      async (parts: PrUrlParts): Promise<Result<[PrDetails, PrFileInfo[], string], PrReviewError>> => {
-        console.log(`Fetching details for PR: ${parts.owner}/${parts.repo}#${parts.pull_number}`);
+  try {
+    // 1. URL を解析
+    const parts = parsePrUrl(context.prUrl);
+    console.log(`Fetching details for PR: ${parts.owner}/${parts.repo}#${parts.pull_number}`);
 
-        const detailsResult = await getPrDetails(octokit, parts);
-        const filesResult = await getPrFiles(octokit, parts);
-        const diffResult = await getPrDiff(octokit, parts);
+    // 2. GitHub API から情報を並行して取得 (または逐次)
+    //    ここでは逐次実行していますが、Promise.all で並列化も可能です
+    const prDetails = await getPrDetails(octokit, parts);
+    const prFiles = await getPrFiles(octokit, parts);
+    const prDiff = await getPrDiff(octokit, parts);
 
-        return Result.combine<[PrDetails, PrFileInfo[], string]>([detailsResult, filesResult, diffResult])
-          .mapErr((err: PrReviewError) => {
-            console.error(`GitHub API エラー: ${err.message}`);
-            return err;
-          });
-      }
-    )
-    .map(([prDetails, prFiles, prDiff]): Promise<Result<string>> => {
-      console.log("Org Mode レポートを生成中...");
-      return generateOrgReport(prDetails, prFiles, prDiff);
-    })
-    .asyncAndThen(async (reportContent: string): Promise<ResultAsync<string, PrReviewError>> => {
-      return writeReportToFile(reportContent, projectRoot);
-    });
+    // 3. レポートを生成
+    console.log("Org Mode レポートを生成中...");
+    const reportContent = generateOrgReport(prDetails, prFiles, prDiff);
 
-  // エラーが発生した場合
-  if (result.isErr()) {
-    const error = result.error;
-    console.error(`ツール実行失敗: [${error.type}] ${error.message}`, error.error || "");
-    // エージェントフレームワークでキャッチされるようにエラーメッセージをスロー
-    throw new Error(`[${error.type}] ${error.message}`);
+    // 4. レポートをファイルに書き込む
+    const reportPath = await writeReportToFile(reportContent, projectRoot);
+
+    // 5. 成功した場合、レポートパスを返す
+    console.log(`ツール実行成功。レポート: ${reportPath}`);
+    return { reportPath };
+
+  } catch (error) {
+    // エラーハンドリング: 発生したエラーをログに出力し、再スロー
+    console.error("ツール実行中にエラーが発生しました:", error);
+    // エージェントフレームワークがエラーを認識できるように、元のエラーまたは新しいエラーをスロー
+    if (error instanceof Error) {
+      throw error; // 元のエラーに有用な情報（メッセージプレフィックスなど）が含まれている場合はそのままスロー
+    } else {
+      // 予期しないエラータイプの場合
+      throw new Error(`[ToolExecutionError] PR レビューツールの実行中に予期しないエラーが発生しました: ${String(error)}`);
+    }
   }
-
-  // 成功した場合、レポートパスを返す
-  console.log(`ツール実行成功。レポート: ${result.value}`);
-  return { reportPath: result.value };
 };
 
 export const prReviewerTool = createTool({

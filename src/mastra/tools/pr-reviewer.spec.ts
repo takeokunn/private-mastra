@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import fs from "fs/promises";
-import { Result, err, ok } from "neverthrow";
+// import { Result, err, ok } from "neverthrow"; // Removed neverthrow
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
@@ -96,26 +96,34 @@ describe("prReviewerTool", () => {
   });
 
   it("should successfully execute with a valid PR URL", async () => {
+    // Mock successful execution
+    mockPulls.get.mockResolvedValueOnce(mockPrDetails); // For details fetch
+    mockPulls.listFiles.mockResolvedValue(mockPrFiles); // For files fetch
+    mockPulls.get.mockResolvedValueOnce(mockPrDiff); // For diff fetch (second get call)
+    mockFs.mkdir.mockResolvedValue(undefined);
+    mockFs.writeFile.mockResolvedValue(undefined);
+
     const result = await prReviewerTool.execute({ context: { prUrl: validPrUrl } });
 
     // Check Octokit calls
     expect(Octokit).toHaveBeenCalledWith({ auth: "test-token" });
-    expect(mockPulls.get).toHaveBeenCalledWith({
-      owner: "test-owner",
-      repo: "test-repo",
-      pull_number: 123,
-    }); // Called for details
-    expect(mockPulls.listFiles).toHaveBeenCalledWith({
+    // Verify the order and parameters of Octokit calls
+    expect(mockPulls.get).toHaveBeenNthCalledWith(1, { // First call for details
       owner: "test-owner",
       repo: "test-repo",
       pull_number: 123,
     });
-    expect(mockPulls.get).toHaveBeenCalledWith({
+    expect(mockPulls.listFiles).toHaveBeenCalledWith({ // Call for files
+      owner: "test-owner",
+      repo: "test-repo",
+      pull_number: 123,
+    });
+    expect(mockPulls.get).toHaveBeenNthCalledWith(2, { // Second call for diff
       owner: "test-owner",
       repo: "test-repo",
       pull_number: 123,
       mediaType: { format: "diff" },
-    }); // Called for diff
+    });
 
     // Check file system calls
     expect(mockFs.mkdir).toHaveBeenCalledWith(expectedOutputDir, { recursive: true });
@@ -136,13 +144,13 @@ describe("prReviewerTool", () => {
   it("should throw an error if GITHUB_TOKEN is not set", async () => {
     delete process.env.GITHUB_TOKEN;
     await expect(prReviewerTool.execute({ context: { prUrl: validPrUrl } })).rejects.toThrow(
-      "[MissingToken] GITHUB_TOKEN environment variable is not set.",
+      "[MissingToken] 環境変数 GITHUB_TOKEN が設定されていません。", // Match the new error message
     );
   });
 
   it("should throw an error for an invalid PR URL", async () => {
     await expect(prReviewerTool.execute({ context: { prUrl: invalidPrUrl } })).rejects.toThrow(
-      "[InvalidUrl] Invalid PR URL format.",
+      "[InvalidUrl] 不正な PR URL フォーマットです。", // Match the new error message prefix
     );
   });
 
@@ -151,38 +159,45 @@ describe("prReviewerTool", () => {
     mockPulls.get.mockRejectedValueOnce(apiError); // Fail the first get call (details)
 
     await expect(prReviewerTool.execute({ context: { prUrl: validPrUrl } })).rejects.toThrow(
-      "[GitHubApiError] Failed to fetch PR details for test-owner/test-repo#123",
+      "[GitHubApiError] Failed to fetch PR details for test-owner/test-repo#123", // Match the new error message
     );
   });
 
   it("should throw an error if fetching PR files fails", async () => {
     const apiError = new Error("API Error: Server Error");
+    // Mock successful details fetch first
+    mockPulls.get.mockResolvedValueOnce(mockPrDetails);
     mockPulls.listFiles.mockRejectedValue(apiError); // Fail listFiles call
 
     await expect(prReviewerTool.execute({ context: { prUrl: validPrUrl } })).rejects.toThrow(
-      "[GitHubApiError] Failed to fetch PR files for test-owner/test-repo#123",
+      "[GitHubApiError] Failed to fetch PR files for test-owner/test-repo#123", // Match the new error message
     );
   });
 
   it("should throw an error if fetching PR diff fails", async () => {
     const apiError = new Error("API Error: Forbidden");
-    // Mock successful details and files, but fail diff
+    // Mock successful details and files, but fail diff (second get call)
     mockPulls.get.mockResolvedValueOnce(mockPrDetails); // Success for details
     mockPulls.listFiles.mockResolvedValue(mockPrFiles); // Success for files
     mockPulls.get.mockRejectedValueOnce(apiError); // Fail for diff
 
     await expect(prReviewerTool.execute({ context: { prUrl: validPrUrl } })).rejects.toThrow(
-      "[GitHubApiError] Failed to fetch PR diff for test-owner/test-repo#123",
+      "[GitHubApiError] Failed to fetch PR diff for test-owner/test-repo#123", // Match the new error message
     );
   });
 
 
   it("should throw an error if writing the report file fails", async () => {
     const writeError = new Error("Disk full");
-    mockFs.writeFile.mockRejectedValue(writeError);
+    // Mock successful API calls
+    mockPulls.get.mockResolvedValueOnce(mockPrDetails);
+    mockPulls.listFiles.mockResolvedValue(mockPrFiles);
+    mockPulls.get.mockResolvedValueOnce(mockPrDiff);
+    mockFs.mkdir.mockResolvedValue(undefined); // Assume mkdir succeeds
+    mockFs.writeFile.mockRejectedValue(writeError); // Fail writeFile
 
     await expect(prReviewerTool.execute({ context: { prUrl: validPrUrl } })).rejects.toThrow(
-      "[FileWriteError] Failed to write report file", // Check for the specific error message part
+      "[FileWriteError] レポートファイルの書き込みに失敗しました", // Match the new error message prefix
     );
   });
 });
