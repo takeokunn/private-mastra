@@ -1,5 +1,6 @@
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
+import { match } from 'ts-pattern'; // Import match from ts-pattern
 
 export type GeocodingResponse = {
   results: {
@@ -76,7 +77,41 @@ const getWeather = async (location: string): Promise<WeatherToolResponse> => {
   };
 };
 
-const getWeatherCondition = (code: number): string => {
+const getWeatherCondition = (code: number): string =>
+  match(code)
+    .with(0, () => 'Clear sky')
+    .with(1, () => 'Mainly clear')
+    .with(2, () => 'Partly cloudy')
+    .with(3, () => 'Overcast')
+    .with(45, () => 'Foggy')
+    .with(48, () => 'Depositing rime fog')
+    .with(51, () => 'Light drizzle')
+    .with(53, () => 'Moderate drizzle')
+    .with(55, () => 'Dense drizzle')
+    .with(56, () => 'Light freezing drizzle')
+    .with(57, () => 'Dense freezing drizzle')
+    .with(61, () => 'Slight rain')
+    .with(63, () => 'Moderate rain')
+    .with(65, () => 'Heavy rain')
+    .with(66, () => 'Light freezing rain')
+    .with(67, () => 'Heavy freezing rain')
+    .with(71, () => 'Slight snow fall')
+    .with(73, () => 'Moderate snow fall')
+    .with(75, () => 'Heavy snow fall')
+    .with(77, () => 'Snow grains')
+    .with(80, () => 'Slight rain showers')
+    .with(81, () => 'Moderate rain showers')
+    .with(82, () => 'Violent rain showers')
+    .with(85, () => 'Slight snow showers')
+    .with(86, () => 'Heavy snow showers')
+    .with(95, () => 'Thunderstorm')
+    .with(96, () => 'Thunderstorm with slight hail')
+    .with(99, () => 'Thunderstorm with heavy hail')
+    .otherwise(() => 'Unknown');
+
+/*
+// Original implementation for reference:
+const getWeatherCondition_original = (code: number): string => {
   const conditions: Record<number, string> = {
     0: 'Clear sky',
     1: 'Mainly clear',
@@ -108,4 +143,5 @@ const getWeatherCondition = (code: number): string => {
     99: 'Thunderstorm with heavy hail',
   };
   return conditions[code] || 'Unknown';
-}
+};
+*/

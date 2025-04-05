@@ -50,4 +50,5 @@ Open-Meteoの天気コードを人間が読める形式の状況文字列（例:
 
 - `@mastra/core/tools`: `createTool`, `ToolExecutionContext` 用。
 - `zod`: スキーマ定義と検証用。
+- `ts-pattern`: `getWeatherCondition` でのパターンマッチング用。
 - `fetch`: API呼び出しを行うための暗黙的な依存関係。
