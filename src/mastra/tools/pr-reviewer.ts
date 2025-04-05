@@ -262,64 +262,73 @@ const writeReportToFile = async (reportContent: string, projectRoot: string): Pr
   }
 }
 
+/**
+ * PR レビューツールを実行し、Org Mode レポートを生成する。
+ * @param context ツール実行コンテキスト (prUrl を含む)。
+ * @returns レポートファイルへの絶対パスを含むオブジェクト。
+ * @throws GITHUB_TOKEN がない場合や API/ファイル書き込みエラー時に例外をスロー。
+ */
+const executePrReview = async ({ context }: { context: { prUrl: string } }): Promise<{ reportPath: string }> => {
+  const githubToken = process.env.GITHUB_TOKEN;
+  // GITHUB_TOKEN がなければ早期リターン (エラー送出)
+  if (!githubToken) {
+    const error: PrReviewError = { type: "MissingToken", message: "環境変数 GITHUB_TOKEN が設定されていません。" };
+    console.error(`ツール実行失敗: ${error.message}`);
+    // エージェントフレームワークに失敗を通知するためにエラーをスロー
+    throw new Error(error.message);
+  }
+
+  const projectRoot = process.cwd();
+  const octokit = new Octokit({ auth: githubToken });
+
+  // --- Chain of operations using Result ---
+  const result = await parsePrUrl(context.prUrl)
+    .asyncAndThen(async (parts) => {
+      console.log(`Fetching details for PR: ${parts.owner}/${parts.repo}#${parts.pull_number}`);
+      const detailsResult = await getPrDetails(octokit, parts);
+      const filesResult = await getPrFiles(octokit, parts);
+      const diffResult = await getPrDiff(octokit, parts);
+
+      // 結果を結合 - すべてのフェッチが成功した場合のみ続行
+      return Result.combine([detailsResult, filesResult, diffResult]).mapErr((errors) => {
+        // 必要であれば個々のエラーをログ記録し、簡潔さのために最初のエラーを返す
+        const firstError = errors[0];
+        console.error(`GitHub API エラー: ${firstError.message}`, firstError.error || "");
+        return firstError; // 最初に発生したエラーを伝播させる
+      });
+    })
+    .map(([prDetails, prFiles, prDiff]) => {
+      console.log("Org Mode レポートを生成中...");
+      return generateOrgReport(prDetails, prFiles, prDiff);
+    })
+    .asyncAndThen(async (reportContent) => {
+      return writeReportToFile(reportContent, projectRoot);
+    });
+  // --- End Chain ---
+
+  // エラーが発生した場合
+  if (result.isErr()) {
+    const error = result.error;
+    console.error(`ツール実行失敗: [${error.type}] ${error.message}`, error.error || "");
+    // エージェントフレームワークでキャッチされるようにエラーメッセージをスロー
+    throw new Error(`[${error.type}] ${error.message}`);
+  }
+
+  // 成功した場合、レポートパスを返す
+  console.log(`ツール実行成功。レポート: ${result.value}`);
+  return { reportPath: result.value };
+};
+
+
 export const prReviewerTool = createTool({
-  id: "pr-reviewer", // Renamed from run-pr-review for clarity
+  id: "pr-reviewer",
   description:
-    "Fetches GitHub Pull Request information (details, files, diff) and generates a basic Org Mode review report.",
+    "GitHub プルリクエストの情報（詳細、ファイルリスト、差分）を取得し、基本的な Org Mode 形式のレビューレポートを生成します。",
   inputSchema: z.object({
-    prUrl: z.string().url().describe("The full URL of the GitHub Pull Request"),
+    prUrl: z.string().url().describe("GitHub プルリクエストの完全な URL"),
   }),
   outputSchema: z.object({
-    reportPath: z.string().describe("The absolute path to the generated review report file"),
+    reportPath: z.string().describe("生成されたレビューレポートファイルへの絶対パス"),
   }),
-  execute: async ({ context }): Promise<{ reportPath: string }> => {
-    const githubToken = process.env.GITHUB_TOKEN;
-    // GITHUB_TOKEN がなければ早期リターン (エラー送出)
-    if (!githubToken) {
-      const error: PrReviewError = { type: "MissingToken", message: "環境変数 GITHUB_TOKEN が設定されていません。" };
-      console.error(`ツール実行失敗: ${error.message}`);
-      // エージェントフレームワークに失敗を通知するためにエラーをスロー
-      throw new Error(error.message);
-    }
-
-    const projectRoot = process.cwd();
-    const octokit = new Octokit({ auth: githubToken });
-
-    // --- Chain of operations using Result ---
-    const result = await parsePrUrl(context.prUrl)
-      .asyncAndThen(async (parts) => {
-        console.log(`Fetching details for PR: ${parts.owner}/${parts.repo}#${parts.pull_number}`);
-        const detailsResult = await getPrDetails(octokit, parts);
-        const filesResult = await getPrFiles(octokit, parts);
-        const diffResult = await getPrDiff(octokit, parts);
-
-        // 結果を結合 - すべてのフェッチが成功した場合のみ続行
-        return Result.combine([detailsResult, filesResult, diffResult]).mapErr((errors) => {
-          // 必要であれば個々のエラーをログ記録し、簡潔さのために最初のエラーを返す
-          const firstError = errors[0];
-          console.error(`GitHub API エラー: ${firstError.message}`, firstError.error || "");
-          return firstError; // 最初に発生したエラーを伝播させる
-        });
-      })
-      .map(([prDetails, prFiles, prDiff]) => {
-        console.log("Org Mode レポートを生成中...");
-        return generateOrgReport(prDetails, prFiles, prDiff);
-      })
-      .asyncAndThen(async (reportContent) => {
-        return writeReportToFile(reportContent, projectRoot);
-      });
-    // --- End Chain ---
-
-    // エラーが発生した場合
-    if (result.isErr()) {
-      const error = result.error;
-      console.error(`ツール実行失敗: [${error.type}] ${error.message}`, error.error || "");
-      // エージェントフレームワークでキャッチされるようにエラーメッセージをスロー
-      throw new Error(`[${error.type}] ${error.message}`);
-    }
-
-    // 成功した場合、レポートパスを返す
-    console.log(`ツール実行成功。レポート: ${result.value}`);
-    return { reportPath: result.value };
-  },
+  execute: executePrReview, // 抽出した関数を呼び出す
 });
