@@ -1,6 +1,6 @@
 import { google } from '@ai-sdk/google';
 import { Agent } from '@mastra/core/agent';
-// 必要なGitHubツールをインポート
+
 import { getPullRequestDetails, getPullRequestDiff } from '../tools';
 
 export const pullRequestReviewerAgent = new Agent({
