@@ -1,56 +1,56 @@
-# Documentation for `src/mastra/tools/github.ts`
+# `src/mastra/tools/github.ts` のドキュメント
 
-This file defines tools for interacting with the GitHub API, specifically for retrieving Pull Request information.
+このファイルは、GitHub APIと対話し、特にプルリクエスト情報を取得するためのツールを定義します。
 
-## Overview
+## 概要
 
-It utilizes `@ai-sdk/react`'s `tool` function to define tools compatible with AI agents, `zod` for parameter validation, and `@octokit/rest` for making GitHub API calls.
+AIエージェントと互換性のあるツールを定義するために `@ai-sdk/react` の `tool` 関数、パラメータ検証のために `zod`、GitHub API呼び出しを行うために `@octokit/rest` を利用します。
 
-**Important:** These tools require the `GITHUB_TOKEN` environment variable to be set for authentication with the GitHub API. A warning is logged if the token is missing.
+**重要:** これらのツールは、GitHub APIでの認証のために `GITHUB_TOKEN` 環境変数が設定されている必要があります。トークンが見つからない場合は警告がログに出力されます。
 
-## Exports
+## エクスポート
 
 ### `githubTools`
 
-An object containing the defined GitHub interaction tools.
+定義されたGitHubインタラクションツールを含むオブジェクト。
 
 #### `getPullRequestDetails`
 
-A tool to fetch detailed information about a specific GitHub Pull Request.
+特定のGitHubプルリクエストに関する詳細情報を取得するツール。
 
-- **Description:** 'GitHubプルリクエストの詳細（タイトル、説明、作成者、ブランチなど）を取得します。' (Gets details of a GitHub Pull Request like title, description, author, branches, etc.)
-- **Parameters:**
-    - `repository`: String in "owner/repo" format.
-    - `pullRequestNumber`: The number of the PR.
-- **Execute:**
-    1. Parses the `repository` string into owner and repo.
-    2. Calls the Octokit `pulls.get` method.
-    3. Returns an object containing `title`, `description`, `author`, `baseBranch`, and `headBranch`.
-    4. Includes error handling and logging.
+- **説明:** 'GitHubプルリクエストの詳細（タイトル、説明、作成者、ブランチなど）を取得します。'
+- **パラメータ:**
+    - `repository`: "owner/repo" 形式の文字列。
+    - `pullRequestNumber`: PRの番号。
+- **実行:**
+    1. `repository` 文字列を owner と repo に解析します。
+    2. Octokit の `pulls.get` メソッドを呼び出します。
+    3. `title`, `description`, `author`, `baseBranch`, `headBranch` を含むオブジェクトを返します。
+    4. エラーハンドリングとロギングを含みます。
 
 #### `getPullRequestDiff`
 
-A tool to fetch the code changes (diff) for a specific GitHub Pull Request.
+特定のGitHubプルリクエストのコード変更（差分）を取得するツール。
 
-- **Description:** 'GitHubプルリクエストのコード変更（差分）を取得します。' (Gets the code changes (diff) of a GitHub Pull Request.)
-- **Parameters:**
-    - `repository`: String in "owner/repo" format.
-    - `pullRequestNumber`: The number of the PR.
-- **Execute:**
-    1. Parses the `repository` string into owner and repo.
-    2. Calls the Octokit `pulls.get` method with `mediaType: { format: 'diff' }`.
-    3. Returns the diff content as a string.
-    4. Includes error handling and logging.
+- **説明:** 'GitHubプルリクエストのコード変更（差分）を取得します。'
+- **パラメータ:**
+    - `repository`: "owner/repo" 形式の文字列。
+    - `pullRequestNumber`: PRの番号。
+- **実行:**
+    1. `repository` 文字列を owner と repo に解析します。
+    2. Octokit の `pulls.get` メソッドを `mediaType: { format: 'diff' }` 付きで呼び出します。
+    3. 差分コンテンツを文字列として返します。
+    4. エラーハンドリングとロギングを含みます。
 
-## Internal Functions
+## 内部関数
 
 ### `parseRepoString(repoString: string)`
 
-A helper function that takes a repository string (e.g., "owner/repo") and splits it into an object `{ owner: string, repo: string }`. Throws an error if the format is invalid.
+リポジトリ文字列（例: "owner/repo"）を受け取り、それを `{ owner: string, repo: string }` オブジェクトに分割するヘルパー関数。形式が無効な場合はエラーをスローします。
 
-## Dependencies
+## 依存関係
 
-- `@ai-sdk/react`: For the `tool` function.
-- `zod`: For schema definition and validation.
-- `@octokit/rest`: For interacting with the GitHub API.
-- `process.env.GITHUB_TOKEN`: Required environment variable for authentication.
+- `@ai-sdk/react`: `tool` 関数用。
+- `zod`: スキーマ定義と検証用。
+- `@octokit/rest`: GitHub APIとの対話用。
+- `process.env.GITHUB_TOKEN`: 認証に必要な環境変数。

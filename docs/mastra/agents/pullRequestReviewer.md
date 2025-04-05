@@ -1,30 +1,30 @@
-# Documentation for `src/mastra/agents/pullRequestReviewer.ts`
+# `src/mastra/agents/pullRequestReviewer.ts` のドキュメント
 
-This file defines the `pullRequestReviewerAgent`, an AI assistant specialized in reviewing GitHub Pull Requests.
+このファイルは、GitHubプルリクエストのレビューに特化したAIアシスタントである `pullRequestReviewerAgent` を定義します。
 
-## Overview
+## 概要
 
-It imports the `Agent` class, the Google AI model, and specific GitHub tools (`getPullRequestDetails`, `getPullRequestDiff`) required for its function.
+`Agent` クラス、Google AIモデル、およびその機能に必要な特定のGitHubツール (`getPullRequestDetails`, `getPullRequestDiff`) をインポートします。
 
-## Exports
+## エクスポート
 
 ### `pullRequestReviewerAgent`
 
-An instance of the `Agent` class configured as a code reviewer.
+コードレビュアーとして設定された `Agent` クラスのインスタンス。
 
-- **Name:** 'Pull Request Reviewer Agent'
-- **Instructions:** Detailed steps for the agent to follow when reviewing a PR:
-    1. Use `getPullRequestDetails` for context.
-    2. Use `getPullRequestDiff` for code changes.
-    3. Analyze based on clarity, appropriateness, potential issues, and best practices.
-    4. Provide a concise review summary.
-    5. Mention specific lines if necessary, avoiding long snippets.
-    6. Requires repository name and PR number to start.
-- **Model:** Uses `google('gemini-1.5-pro-latest')`.
-- **Tools:** Equipped with `getPullRequestDetails` and `getPullRequestDiff` from `../tools`.
+- **名前:** 'Pull Request Reviewer Agent'
+- **指示:** PRをレビューする際にエージェントが従うべき詳細な手順:
+    1. コンテキストを理解するために `getPullRequestDetails` を使用する。
+    2. コードの変更を確認するために `getPullRequestDiff` を使用する。
+    3. 明瞭さ、適切さ、潜在的な問題、ベストプラクティスに基づいて分析する。
+    4. レビューの簡潔な要約を提供する。
+    5. 必要であれば特定の行に言及するが、応答に長すぎるコードスニペットを含めない。
+    6. レビューを開始するにはリポジトリ名とPR番号が必要。
+- **モデル:** `google('gemini-1.5-pro-latest')` を使用します。
+- **ツール:** `../tools` からの `getPullRequestDetails` と `getPullRequestDiff` を装備しています。
 
-## Dependencies
+## 依存関係
 
-- `@ai-sdk/google`: For the AI model.
-- `@mastra/core/agent`: For the `Agent` class.
-- `../tools`: For the `getPullRequestDetails` and `getPullRequestDiff` tools.
+- `@ai-sdk/google`: AIモデル用。
+- `@mastra/core/agent`: `Agent` クラス用。
+- `../tools`: `getPullRequestDetails` および `getPullRequestDiff` ツール用。

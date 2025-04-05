@@ -1,29 +1,29 @@
-# Documentation for `src/mastra/agents/index.ts`
+# `src/mastra/agents/index.ts` のドキュメント
 
-This file defines and exports the available agents within the Mastra application.
+このファイルは、Mastraアプリケーション内で利用可能なエージェントを定義し、エクスポートします。
 
-## Overview
+## 概要
 
-It imports necessary components like `Agent` from `@mastra/core/agent`, AI models (`google`), and tools (`weatherTool`). It defines the `weatherAgent` directly and re-exports the `pullRequestReviewerAgent` from its dedicated module.
+`@mastra/core/agent` からの `Agent`、AIモデル (`google`)、ツール (`weatherTool`) などの必要なコンポーネントをインポートします。`weatherAgent` を直接定義し、`pullRequestReviewerAgent` を専用モジュールから再エクスポートします。
 
-## Exports
+## エクスポート
 
 ### `weatherAgent`
 
-An instance of the `Agent` class configured as a weather assistant.
+天気アシスタントとして設定された `Agent` クラスのインスタンス。
 
-- **Name:** 'Weather Agent'
-- **Instructions:** Guides the agent to provide weather information, ask for location if missing, translate non-English locations, handle multi-part locations, include relevant details, and keep responses concise.
-- **Model:** Uses `google('gemini-1.5-pro-latest')`.
-- **Tools:** Equipped with the `weatherTool` to fetch weather data.
+- **名前:** 'Weather Agent'
+- **指示:** エージェントに天気情報を提供するよう指示します。場所が指定されていない場合は尋ねる、英語以外の場所は翻訳する、複数部分からなる場所を処理する、関連する詳細を含める、応答を簡潔に保つ、といったガイドラインが含まれます。
+- **モデル:** `google('gemini-1.5-pro-latest')` を使用します。
+- **ツール:** 天気データを取得するための `weatherTool` を装備しています。
 
 ### `pullRequestReviewerAgent`
 
-Re-exported from `./pullRequestReviewer`. See `docs/mastra/agents/pullRequestReviewer.md` for details.
+`./pullRequestReviewer` から再エクスポートされます。詳細は `docs/mastra/agents/pullRequestReviewer.md` を参照してください。
 
-## Dependencies
+## 依存関係
 
-- `@ai-sdk/google`: For the AI model.
-- `@mastra/core/agent`: For the `Agent` class.
-- `../tools`: For the `weatherTool`.
-- `./pullRequestReviewer`: For the `pullRequestReviewerAgent`.
+- `@ai-sdk/google`: AIモデル用。
+- `@mastra/core/agent`: `Agent` クラス用。
+- `../tools`: `weatherTool` 用。
+- `./pullRequestReviewer`: `pullRequestReviewerAgent` 用。
