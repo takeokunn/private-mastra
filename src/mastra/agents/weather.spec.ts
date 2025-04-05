@@ -9,10 +9,13 @@ vi.mock('@ai-sdk/google', () => ({
 }));
 
 describe('Weather Agent (src/mastra/agents/weather.ts)', () => {
-  it('should be an instance of Agent', () => {
+  it('should be an instance of Agent with correct configuration', () => { // Combined assertions
     expect(weatherAgent).toBeInstanceOf(Agent);
     expect(weatherAgent.name).toBe('Weather Agent');
-    expect(weatherAgent.instructions).toContain('You are a helpful weather assistant that provides accurate weather information.');
+    // Check for Japanese instructions
+    expect(weatherAgent.instructions).toContain('あなたは正確な天気情報を提供する、役に立つ天気アシスタントです。');
+    expect(weatherAgent.instructions).toContain('場所が指定されていない場合は、必ず場所を尋ねてください。');
+    expect(weatherAgent.instructions).toContain('現在の天気データを取得するには、weatherToolを使用してください。');
     expect(weatherAgent.tools.weatherTool).toBe(weatherTool);
   });
 
