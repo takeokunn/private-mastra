@@ -12,7 +12,8 @@ const parseReportPath = (stdout: string): string | null => {
 
 export const prReviewerTool = createTool({
   id: "run-pr-review",
-  description: "Runs the PR review script for a given GitHub Pull Request URL and returns the path to the generated Org Mode report.",
+  description:
+    "Runs the PR review script for a given GitHub Pull Request URL and returns the path to the generated Org Mode report.",
   inputSchema: z.object({
     prUrl: z.string().url().describe("The full URL of the GitHub Pull Request"),
   }),
@@ -77,7 +78,6 @@ export const prReviewerTool = createTool({
       const absoluteReportPath = path.resolve(projectRoot, reportPath);
       console.log(`Report generated at: ${absoluteReportPath}`);
       return { reportPath: absoluteReportPath };
-
     } catch (error: any) {
       console.error("Error executing or processing PR review script:", error);
       // Rethrow a cleaner error message
