@@ -167,7 +167,6 @@ const getPrDiff = async (octokit: Octokit, parts: PrUrlParts): Promise<Result<st
 const generateOrgReport = (prDetails: PrDetails, files: PrFileInfo[], diff: string): string => {
   const reportDate = new Date().toISOString();
   const fileSummary = files.map((f) => `- ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})`).join("\n");
-  const staticAnalysisResult = "[Static Analysis Results Placeholder - Not Implemented]";
   const staticAnalysisResult = "[静的解析結果プレースホルダー - 未実装]";
   const testResult = "[テスト結果プレースホルダー - 未実装]";
 
