@@ -60,7 +60,6 @@ describe('Mastra Instance (src/mastra/index.ts)', () => {
     expect(configuredLogger).toBeDefined();
 
     // モックロガーが保持する設定を確認 (モックの実装に依存)
-    // @ts-expect-error - _config または getConfig が存在しない可能性があるためエラーを抑制
     const loggerConfig = configuredLogger?.getConfig ? configuredLogger.getConfig() : configuredLogger?._config;
 
     expect(loggerConfig).toEqual({
