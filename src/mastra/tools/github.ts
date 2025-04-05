@@ -23,7 +23,6 @@ export const githubTools = {
     description: 'Get details of a GitHub pull request, like title, description, author, and branches.',
     parameters: z.object({
       repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
-      repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
       pullRequestNumber: z.number().describe('The number of the pull request'),
     }),
     execute: async ({ repository, pullRequestNumber }) => {
@@ -61,7 +60,6 @@ export const githubTools = {
   getPullRequestDiff: tool({
     description: 'Get the code changes (diff) for a GitHub pull request.',
     parameters: z.object({
-      repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
       repository: z.string().describe('The owner and repository name (e.g., "owner/repo")'),
       pullRequestNumber: z.number().describe('The number of the pull request'),
     }),

@@ -1,9 +1,6 @@
 import { google } from '@ai-sdk/google';
 import { Agent } from '@mastra/core/agent';
 // Import all necessary tools
-import { google } from '@ai-sdk/google';
-import { Agent } from '@mastra/core/agent';
-// Import all necessary tools
 import { weatherTool } from '../tools'; // Keep weather tool import separate if needed elsewhere
 
 // Import the new agent
