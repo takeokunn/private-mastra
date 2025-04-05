@@ -78,7 +78,7 @@ const generateReportFilename = (): string => {
  * @param parts 解析済みの PR URL 情報。
  * @returns PR 詳細またはエラーを含む Promise<Result>。
  */
-const getPrDetails = async (octokit: Octokit, parts: PrUrlParts): Promise<ResultAsync<PrDetails, PrReviewError>> => {
+const getPrDetails = (octokit: Octokit, parts: PrUrlParts): ResultAsync<PrDetails, PrReviewError> => {
   const promise = octokit.pulls.get({
     owner: parts.owner,
     repo: parts.repo,
@@ -108,7 +108,7 @@ const getPrDetails = async (octokit: Octokit, parts: PrUrlParts): Promise<Result
  * @param parts 解析済みの PR URL 情報。
  * @returns ファイル情報配列またはエラーを含む Promise<Result>。
  */
-const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<ResultAsync<PrFileInfo[], PrReviewError>> => {
+const getPrFiles = (octokit: Octokit, parts: PrUrlParts): ResultAsync<PrFileInfo[], PrReviewError> => {
   const promise = octokit.pulls.listFiles({
     owner: parts.owner,
     repo: parts.repo,
@@ -137,7 +137,7 @@ const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<ResultAs
  * @param parts 解析済みの PR URL 情報。
  * @returns diff 文字列またはエラーを含む Promise<Result>。
  */
-const getPrDiff = async (octokit: Octokit, parts: PrUrlParts): Promise<Result<string, PrReviewError>> => {
+const getPrDiff = (octokit: Octokit, parts: PrUrlParts): ResultAsync<string, PrReviewError> => {
   const promise = octokit.pulls.get({
     owner: parts.owner,
     repo: parts.repo,
@@ -281,29 +281,28 @@ const executePrReview = async ({ context }: { context: { prUrl: string } }): Pro
 
   // --- Chain of operations using Result ---
   const result = await parsePrUrl(context.prUrl)
-    .asyncAndThen(async (parts) => {
-      console.log(`Fetching details for PR: ${parts.owner}/${parts.repo}#${parts.pull_number}`);
-      const detailsResult = await getPrDetails(octokit, parts);
-      const filesResult = await getPrFiles(octokit, parts);
-      const diffResult = await getPrDiff(octokit, parts);
+    .asyncAndThen(
+      async (parts: PrUrlParts): Promise<Result<[PrDetails, PrFileInfo[], string], PrReviewError>> => {
+        console.log(`Fetching details for PR: ${parts.owner}/${parts.repo}#${parts.pull_number}`);
 
-      // 結果を結合 - すべてのフェッチが成功した場合のみ続行
-      return Result.combine([detailsResult, filesResult, diffResult])
-        .mapErr((errors) => {
-          // 必要であれば個々のエラーをログ記録し、簡潔さのために最初のエラーを返す
-          const firstError = errors[0];
-          console.error(`GitHub API エラー: ${firstError.message}`, firstError.error || "");
-          return firstError; // 最初に発生したエラーを伝播させる
-        });
-    })
-    .map(([prDetails, prFiles, prDiff]) => {
+        const detailsResult = await getPrDetails(octokit, parts);
+        const filesResult = await getPrFiles(octokit, parts);
+        const diffResult = await getPrDiff(octokit, parts);
+
+        return Result.combine<[PrDetails, PrFileInfo[], string]>([detailsResult, filesResult, diffResult])
+          .mapErr((err: PrReviewError) => {
+            console.error(`GitHub API エラー: ${err.message}`);
+            return err;
+          });
+      }
+    )
+    .map(([prDetails, prFiles, prDiff]): Promise<Result<string>> => {
       console.log("Org Mode レポートを生成中...");
       return generateOrgReport(prDetails, prFiles, prDiff);
     })
-    .asyncAndThen(async (reportContent) => {
+    .asyncAndThen(async (reportContent: string): Promise<ResultAsync<string, PrReviewError>> => {
       return writeReportToFile(reportContent, projectRoot);
     });
-  // --- End Chain ---
 
   // エラーが発生した場合
   if (result.isErr()) {
@@ -317,7 +316,6 @@ const executePrReview = async ({ context }: { context: { prUrl: string } }): Pro
   console.log(`ツール実行成功。レポート: ${result.value}`);
   return { reportPath: result.value };
 };
-
 
 export const prReviewerTool = createTool({
   id: "pr-reviewer",
