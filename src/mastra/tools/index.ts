@@ -41,15 +41,8 @@ interface WeatherCurrentData {
   weather_code: number;
 }
 
-// Keep existing WeatherResponse interface
-interface WeatherResponse {
-  results: {
-    latitude: number;
-    longitude: number;
-    name: string;
-  }[];
-}
-interface WeatherResponse {
+// Keep existing WeatherResponse interface for Weather API
+interface WeatherResponse { // Renamed from the duplicate for clarity if needed, but removing the duplicate is better.
   current: {
     time: string;
     temperature_2m: number;

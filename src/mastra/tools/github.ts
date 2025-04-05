@@ -38,7 +38,8 @@ interface ParsedRepo {
 // リポジトリ文字列からownerとrepoを解析するヘルパー関数
 const parseRepoString = (repoString: string): ParsedRepo => { // Use defined type
   const parts = repoString.split('/');
-  if (parts.length !== 2) {
+  // Add checks for empty owner or repo parts, matching the test logic
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
     throw new Error(`Invalid repository format: ${repoString}. Expected "owner/repo".`);
   }
   return { owner: parts[0], repo: parts[1] };
