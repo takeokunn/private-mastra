@@ -16,7 +16,12 @@
 
 `./pr-reviewer` から再エクスポートされます。詳細は `docs/mastra/agents/pr-reviewer.md` を参照してください。
 
+### `blogReviewerAgent`
+
+`./blog-reviewer` から再エクスポートされます。詳細は `docs/mastra/agents/blog-reviewer.md` を参照してください。
+
 ## 依存関係
 
 - `./weather`: `weatherAgent` 用。
 - `./pr-reviewer`: `prReviewerAgent` 用。
+- `./blog-reviewer`: `blogReviewerAgent` 用。

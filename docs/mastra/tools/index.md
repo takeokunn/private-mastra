@@ -12,6 +12,16 @@
 
 `./weather` から再エクスポートされます。詳細は `docs/mastra/tools/weather.md` を参照してください。
 
+### `prReviewerTool`
+
+`./pr-reviewer` から再エクスポートされます。詳細は `docs/mastra/tools/pr-reviewer.md` を参照してください。
+
+### `blogReviewerTool`
+
+`./blog-reviewer` から再エクスポートされます。詳細は `docs/mastra/tools/blog-reviewer.md` を参照してください。
+
 ## 依存関係
 
 - `./weather`: `weatherTool` 用。
+- `./pr-reviewer`: `prReviewerTool` 用。
+- `./blog-reviewer`: `blogReviewerTool` 用。
