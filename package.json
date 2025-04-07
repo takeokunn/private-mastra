@@ -19,7 +19,9 @@
     "zod": "^3.24.2",
     "execa": "^9.3.0",
     "ts-node": "^10.9.2",
-    "neverthrow": "^6.2.2"
+    "neverthrow": "^6.2.2",
+    "@langchain/openai": "^0.2.5",
+    "langchain": "^0.2.11"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
