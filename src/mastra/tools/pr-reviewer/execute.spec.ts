@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { executePrReview } from "../pr-reviewer/execute";
 
-// モックするデータをここで定義
 const mockDetails = {
   owner: "owner",
   repo: "repo",
@@ -13,20 +12,21 @@ const mockDetails = {
   head_sha: "head123",
 };
 
-const mockFiles = [{ filename: "file1.ts", status: "modified", changes: 10, additions: 5, deletions: 5 }];
+const mockFiles = [
+  { filename: "file1.ts", status: "modified", changes: 10, additions: 5, deletions: 5 },
+];
 
 const mockDiff = "diff --git a/file1.ts b/file1.ts\n...";
 const mockReportPath = "/tmp/report.org";
 
-vi.mock("./fetcher", () => ({
-  getPrDetails: vi.fn(() => mockDetails),
-  getPrFiles: vi.fn(() => mockFiles),
-  getPrDiff: vi.fn(() => mockDiff),
+vi.mock("../pr-reviewer/fetcher", () => ({
+  fetchPrDetails: vi.fn().mockResolvedValue(mockDetails),
+  fetchPrFiles: vi.fn().mockResolvedValue(mockFiles),
+  fetchPrDiff: vi.fn().mockResolvedValue(mockDiff),
 }));
 
-vi.mock("./output", () => ({
-  generateOrgReport: vi.fn(() => mockReportPath),
-  writeReportToFile: vi.fn(() => mockReportPath),
+vi.mock("../pr-reviewer/output", () => ({
+  generatePrReviewReport: vi.fn().mockResolvedValue(mockReportPath),
 }));
 
 describe("executePrReview", () => {
