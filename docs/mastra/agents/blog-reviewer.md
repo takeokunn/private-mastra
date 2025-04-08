@@ -1,31 +1,33 @@
-# `src/mastra/agents/blog-reviewer.ts` のドキュメント
+# `src/mastra/agents/blog-reviewer.ts` ドキュメント
 
-このファイルは、ブログ記事のレビューを行うためのエージェント (`blogReviewerAgent`) を定義し、エクスポートします。
+ブログ記事のレビューを行うAIエージェント`blogReviewerAgent`の仕様を説明します。
 
 ## 概要
 
-`blogReviewerAgent` は、ユーザーからの指示（レビュー対象の記事情報）を受け取り、`blogReviewerTool` を利用して記事を分析し、改善提案を生成する役割を担います。LLM（例: OpenAI GPT）と連携して動作します。このファイルは `AgentExecutor` インスタンスをエクスポートします。
+- `Agent`クラスを用いて構築。
+- `blogReviewerTool`をツールとして利用。
+- LLM（例: OpenAI GPTやGemini）と連携し、記事の構成・表現・SEO観点での改善提案を生成。
 
-## エクスポート
+## 特徴
 
-### `blogReviewerAgent`
+- **名前:** `"Blog Reviewer Agent"`
+- **指示内容:**
+  - ブログ記事の内容やURLを受け取り、レビューと改善提案を行う。
+  - 文章構成、表現、SEOの観点で具体的なアドバイスを生成。
+- **モデル:** `ChatOpenAI`や`google('gemini-1.5-pro-latest')`など
+- **ツール:** `blogReviewerTool`
 
-LangChain の `AgentExecutor` インスタンスです。`createToolCallingAgent` を使用して作成されたAgentロジックとツールを実行します。
+## 使用例
 
-- **目的**: ブログ記事のレビュープロセスを管理・実行する。
-- **使用ツール**: `blogReviewerTool`
-- **基盤モデル**: `ChatOpenAI` (設定可能)
-- **プロンプト**: システムメッセージで役割を定義し、人間からの入力を受け付け、Agentの思考プロセス (`agent_scratchpad`) を組み込むテンプレートを使用します。
+```plaintext
+ユーザー: このブログ記事をレビューしてください: https://example.com/post
 
-## 設定と実行
-
-- **モデル**: `ChatOpenAI` のインスタンスが使用されます。APIキーやモデル名は適宜設定が必要です。
-- **ツール**: `blogReviewerTool` がエージェントに提供されます。
-- **実行**: エクスポートされた `blogReviewerAgent` の `.invoke()` メソッドなどを呼び出すことで、ブログレビュープロセスを開始できます。入力として `{ input: "レビュー対象の記事内容またはURL" }` のような形式でデータを提供します。
+エージェント: レビュー結果と改善提案を以下に示します...
+```
 
 ## 依存関係
 
-- `@langchain/core`: プロンプトテンプレート、モデル、ツール関連。
-- `@langchain/openai`: OpenAIモデル用。
-- `langchain/agents`: `AgentExecutor`, `createToolCallingAgent` のため。
-- `../tools/blog-reviewer`: `blogReviewerTool` のため。
+- `@langchain/core`
+- `@langchain/openai`
+- `langchain/agents`
+- `../tools/blog-reviewer` (`blogReviewerTool`)
