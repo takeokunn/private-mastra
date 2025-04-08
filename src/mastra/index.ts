@@ -1,7 +1,7 @@
 import { createLogger } from "@mastra/core/logger";
 import { Mastra } from "@mastra/core/mastra";
 
-import { weatherAgent } from "./agents";
+import { weatherAgent } from "./weather";
 
 export const mastra = new Mastra({
   agents: { weatherAgent },
