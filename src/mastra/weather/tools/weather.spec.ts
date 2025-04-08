@@ -62,5 +62,16 @@ describe("Weather Tool", () => {
       expect(spy).toHaveBeenCalledWith("Tokyo");
       expect(result).toEqual(mockWeather);
     });
+
+    it("should throw if getWeather throws", async () => {
+      const error = new Error("API error");
+      vi.spyOn(fetcherModule, "getWeather").mockRejectedValue(error);
+
+      await expect(
+        weatherTool.execute!({
+          context: { location: "Tokyo" },
+        } as any),
+      ).rejects.toThrow(error);
+    });
   });
 });
