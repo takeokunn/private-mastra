@@ -1,6 +1,6 @@
 import { match } from "ts-pattern";
 
-import type { GeocodingResponse, WeatherResponse, WeatherToolResponse } from "./types";
+import type { GeocodingResponse, WeatherResponse, WeatherToolResponse } from "../types";
 
 /**
  * 指定された場所の天気情報を取得する内部ヘルパー関数。

@@ -1,7 +1,7 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 
-import { prReviewerTool } from "../tools/pr-reviewer";
+import { prReviewerTool } from "../tools";
 
 export const prReviewerAgent = new Agent({
   name: "Pull Request Agent",

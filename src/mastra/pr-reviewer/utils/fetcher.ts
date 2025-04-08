@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 
-import { PrUrlParts, PrDetails, PrFileInfo } from "./types";
+import { PrUrlParts, PrDetails, PrFileInfo } from "../types";
 
 /**
  * GitHub API から PR 詳細を取得する。

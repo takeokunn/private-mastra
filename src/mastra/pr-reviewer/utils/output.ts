@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
-import { PrDetails, PrFileInfo } from "./types";
+import { PrDetails, PrFileInfo } from "../types";
 
 const OUTPUT_DIR = ".output"; // レポート出力ディレクトリ
 

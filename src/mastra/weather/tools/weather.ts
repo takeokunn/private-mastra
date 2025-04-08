@@ -1,8 +1,8 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 
-import type { WeatherToolResponse } from "./types";
-import { getWeather } from "./fetcher";
+import type { WeatherToolResponse } from "../types";
+import { getWeather } from "../utils/fetcher";
 
 /**
  * 指定された場所の現在の天気を取得する Mastra ツール。

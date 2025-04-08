@@ -1,4 +1,4 @@
-import type { PrUrlParts } from "./types";
+import type { PrUrlParts } from "../types";
 
 /**
  * GitHub PR URL を解析し、owner, repo, pull number を抽出する

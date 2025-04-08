@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
-import { parsePrUrl } from "./parse";
-import { getPrDetails, getPrDiff, getPrFiles } from "./fetcher";
-import { generateOrgReport, writeReportToFile } from "./output";
+import { parsePrUrl } from "../utils/parse";
+import { getPrDetails, getPrDiff, getPrFiles } from "../utils/fetcher";
+import { generateOrgReport, writeReportToFile } from "../utils/output";
 
 /**
  * PR レビューツールを実行し、Org Mode レポートを生成する。

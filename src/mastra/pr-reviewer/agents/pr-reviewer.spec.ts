@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { prReviewerAgent } from "./pr-reviewer";
-import { prReviewerTool } from "../tools/pr-reviewer";
+import { prReviewerTool } from "../tools";
 
 describe("prReviewerAgent", () => {
   it("should have the correct attribute", () => {
