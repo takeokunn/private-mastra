@@ -26,12 +26,12 @@ describe("executePrReview", () => {
     ];
     const mockDiff = "diff --git a/file1.ts b/file1.ts\n...";
 
-    vi.spyOn(fetcherModule, "fetchPrDetails").mockResolvedValue(mockDetails);
-    vi.spyOn(fetcherModule, "fetchPrFiles").mockResolvedValue(mockFiles);
-    vi.spyOn(fetcherModule, "fetchPrDiff").mockResolvedValue(mockDiff);
+    fetcherModule.fetchPrDetails = vi.fn().mockResolvedValue(mockDetails);
+    fetcherModule.fetchPrFiles = vi.fn().mockResolvedValue(mockFiles);
+    fetcherModule.fetchPrDiff = vi.fn().mockResolvedValue(mockDiff);
 
     const mockReportPath = "/tmp/report.org";
-    vi.spyOn(outputModule, "generatePrReviewReport").mockResolvedValue(mockReportPath);
+    outputModule.generatePrReviewReport = vi.fn().mockResolvedValue(mockReportPath);
 
     const result = await executePrReview(prUrl);
 
