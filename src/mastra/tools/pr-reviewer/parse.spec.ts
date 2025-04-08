@@ -33,7 +33,6 @@ describe("parsePrUrl", () => {
     expect(parsePrUrl(url)).toEqual(expected);
   });
 
-
   it("should throw an error for an invalid URL format (not GitHub)", () => {
     const url = "https://gitlab.com/owner/repo/merge_requests/1";
     expect(() => parsePrUrl(url)).toThrow(
@@ -48,23 +47,23 @@ describe("parsePrUrl", () => {
     );
   });
 
-    it("should throw an error for an invalid URL format (missing parts)", () => {
+  it("should throw an error for an invalid URL format (missing parts)", () => {
     const url = "https://github.com/owner/pull/123";
-     expect(() => parsePrUrl(url)).toThrow(
+    expect(() => parsePrUrl(url)).toThrow(
       "[InvalidUrl] 不正な PR URL フォーマットです。期待されるフォーマット: https://github.com/owner/repo/pull/number",
     );
   });
 
   it("should throw an error for an invalid URL format (malformed)", () => {
     const url = "invalid-url-string";
-     expect(() => parsePrUrl(url)).toThrow(
+    expect(() => parsePrUrl(url)).toThrow(
       "[InvalidUrl] 不正な PR URL フォーマットです。期待されるフォーマット: https://github.com/owner/repo/pull/number",
     );
   });
 
-    it("should throw an error for an empty string", () => {
+  it("should throw an error for an empty string", () => {
     const url = "";
-     expect(() => parsePrUrl(url)).toThrow(
+    expect(() => parsePrUrl(url)).toThrow(
       "[InvalidUrl] 不正な PR URL フォーマットです。期待されるフォーマット: https://github.com/owner/repo/pull/number",
     );
   });

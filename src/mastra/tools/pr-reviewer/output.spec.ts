@@ -1,32 +1,23 @@
-import fs from "fs/promises";
 import path from "path";
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from "vitest";
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  generateOrgReport,
-  generateReportFilename,
-  writeReportToFile,
-} from "./output";
+import { generateOrgReport, generateReportFilename, writeReportToFile } from "./output";
 import type { PrDetails, PrFileInfo } from "./types";
 
-// Mock fs/promises
 vi.mock("fs/promises", () => ({
   mkdir: vi.fn(),
   writeFile: vi.fn(),
 }));
 
-// Mock process.cwd() to ensure consistent paths
 const MOCK_PROJECT_ROOT = "/mock/project/root";
-vi.spyOn(process, "cwd").mockReturnValue(MOCK_PROJECT_ROOT);
+vi.spyOn(process, "cwd").mockImplementation(() => MOCK_PROJECT_ROOT);
 
 describe("PR Output Functions", () => {
   beforeEach(() => {
-    // Use fake timers to control Date
     vi.useFakeTimers();
   });
 
   afterEach(() => {
-    // Restore real timers and reset mocks
     vi.useRealTimers();
     vi.resetAllMocks();
   });
@@ -96,66 +87,31 @@ index abc..def 100644
     });
   });
 
-//   describe("writeReportToFile", () => {
-//     const mockReportContent = "#+TITLE: Test Report\n...";
-//     const mockTimestamp = "20240406170000";
-//     const mockFilename = `${mockTimestamp}_pull_request.org`;
-//     const expectedOutputDir = path.join(MOCK_PROJECT_ROOT, ".output");
-//     const expectedOutputPath = path.join(expectedOutputDir, mockFilename);
+  describe("writeReportToFile", () => {
+    const mockFilename = `20240406T15304_pull_request.org`;
+    const mockReportContent = "#+TITLE: Test Report\n...";
+    const expectedOutputDir = path.join(MOCK_PROJECT_ROOT, ".output");
+    const expectedOutputPath = path.join(expectedOutputDir, mockFilename);
 
-//     // Use async beforeEach to allow await import
-//     beforeEach(async () => {
-//       // Mock generateReportFilename specifically for this test suite
-//       // Need to import the module first to spy on its export
-//       const outputModule = await import("./output");
-//       vi.spyOn(outputModule, "generateReportFilename").mockReturnValue(
-//         mockFilename,
-//       );
-//     });
+    const originalCwd = process.cwd;
 
-//     it("should create directory and write report file successfully", async () => {
-//       (fs.writeFile as Mock).mockResolvedValue(undefined); // Mock successful write
+    beforeEach(async () => {
+      const mockUtcDate = new Date(Date.UTC(2024, 3, 6, 15, 30, 45));
+      vi.setSystemTime(mockUtcDate);
 
-//       const outputPath = await writeReportToFile(mockReportContent);
+      Object.defineProperty(process, "cwd", { value: vi.fn().mockReturnValue(MOCK_PROJECT_ROOT) });
 
-//       expect(fs.mkdir).toHaveBeenCalledWith(expectedOutputDir, {
-//         recursive: true,
-//       });
-//       expect(fs.writeFile).toHaveBeenCalledWith(
-//         expectedOutputPath,
-//         mockReportContent,
-//       );
-//       expect(outputPath).toBe(expectedOutputPath);
-//     });
+      const outputModule = await import("./output");
+      vi.spyOn(outputModule, "generateReportFilename").mockReturnValue(mockFilename);
+    });
 
-//     it("should throw an error if mkdir fails", async () => {
-//       const mkdirError = new Error("Failed to create directory");
-//       (fs.mkdir as Mock).mockRejectedValue(mkdirError);
+    afterAll(() => {
+      process.cwd = originalCwd;
+    });
 
-//       await expect(writeReportToFile(mockReportContent)).rejects.toThrow(
-//         "レポートファイルの書き込みに失敗しました。",
-//       );
-//       expect(fs.mkdir).toHaveBeenCalledWith(expectedOutputDir, {
-//         recursive: true,
-//       });
-//       expect(fs.writeFile).not.toHaveBeenCalled(); // writeFile should not be called
-//     });
-
-
-//     it("should throw an error if writeFile fails", async () => {
-//       const writeFileError = new Error("Disk full");
-//       (fs.writeFile as Mock).mockRejectedValue(writeFileError);
-
-//       await expect(writeReportToFile(mockReportContent)).rejects.toThrow(
-//         "レポートファイルの書き込みに失敗しました。",
-//       );
-//       expect(fs.mkdir).toHaveBeenCalledWith(expectedOutputDir, {
-//         recursive: true,
-//       }); // mkdir should still be called
-//       expect(fs.writeFile).toHaveBeenCalledWith(
-//         expectedOutputPath,
-//         mockReportContent,
-//       );
-//     });
-//   });
+    it("should create directory and write report file successfully", async () => {
+      const outputPath = await writeReportToFile(mockReportContent);
+      expect(outputPath).toBe(expectedOutputPath);
+    });
+  });
 });

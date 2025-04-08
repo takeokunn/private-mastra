@@ -10,7 +10,6 @@ vi.mock("@ai-sdk/google", () => ({
 
 describe("Weather Agent (src/mastra/agents/weather.ts)", () => {
   it("should be an instance of Agent with correct configuration", () => {
-    // Combined assertions
     expect(weatherAgent).toBeInstanceOf(Agent);
     expect(weatherAgent.name).toBe("Weather Agent");
     expect(weatherAgent.instructions).toContain("あなたは正確な天気情報を提供する、役に立つ天気アシスタントです。");
@@ -21,6 +20,6 @@ describe("Weather Agent (src/mastra/agents/weather.ts)", () => {
 
   it("should be configured with the correct model", async () => {
     const { google } = await import("@ai-sdk/google");
-    expect(google).toHaveBeenCalledWith("gemini-1.5-pro-latest");
+    expect(google).toHaveBeenCalledWith("gemini-2.5-pro-exp-03-25");
   });
 });

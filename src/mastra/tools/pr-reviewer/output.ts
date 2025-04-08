@@ -1,9 +1,8 @@
-import fs from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import path from "path";
-import { PrDetails, PrFileInfo } from './types'
+import { PrDetails, PrFileInfo } from "./types";
 
 const OUTPUT_DIR = ".output"; // レポート出力ディレクトリ
-
 
 /**
  * レポート用のタイムスタンプ付きファイル名を生成する。 */
@@ -108,12 +107,12 @@ export const writeReportToFile = async (reportContent: string): Promise<string> 
   const outputPath = path.join(projectRoot, OUTPUT_DIR, filename);
 
   try {
-    await fs.mkdir(OUTPUT_DIR, { recursive: true }); // 出力ディレクトリを作成 (存在してもOK)
-    await fs.writeFile(outputPath, reportContent);
+    await mkdir(OUTPUT_DIR, { recursive: true }); // 出力ディレクトリを作成 (存在してもOK)
+    await writeFile(outputPath, reportContent);
     console.log(`レポートが正常に生成されました: ${outputPath}`);
-    return outputPath
+    return outputPath;
   } catch (error) {
     console.error("レポートファイルの書き込みエラー:", error);
     throw new Error("レポートファイルの書き込みに失敗しました。");
   }
-}
+};

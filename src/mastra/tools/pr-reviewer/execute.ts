@@ -38,7 +38,9 @@ export const executePrReview = async (prUrl: string): Promise<{ reportPath: stri
     if (error instanceof Error) {
       throw error;
     } else {
-      throw new Error(`[ToolExecutionError] PR レビューツールの実行中に予期しないエラーが発生しました: ${String(error)}`);
+      throw new Error(
+        `[ToolExecutionError] PR レビューツールの実行中に予期しないエラーが発生しました: ${String(error)}`,
+      );
     }
   }
 };
