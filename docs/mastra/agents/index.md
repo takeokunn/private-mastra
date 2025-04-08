@@ -1,27 +1,17 @@
-# `src/mastra/agents/index.ts` のドキュメント
+# `src/mastra/agents/index.ts` ドキュメント
 
-このファイルは、Mastraアプリケーション内で利用可能なエージェントを定義し、エクスポートします。
+このファイルは、Mastraで利用可能なエージェントを集約し、エクスポートするエントリーポイントです。
 
 ## 概要
 
-このファイルは、`./weather` から `weatherAgent` をインポートし、再エクスポートします。これにより、アプリケーションの他の部分からエージェントに簡単にアクセスできるようになります。
+- `weatherAgent`のみをインポートし、再エクスポートします。
 
 ## エクスポート
 
-### `weatherAgent`
-
-`./weather` から再エクスポートされます。詳細は `docs/mastra/agents/weather.md` を参照してください。
-
-### `prReviewerAgent`
-
-`./pr-reviewer` から再エクスポートされます。詳細は `docs/mastra/agents/pr-reviewer.md` を参照してください。
-
-### `blogReviewerAgent`
-
-`./blog-reviewer` から再エクスポートされます。詳細は `docs/mastra/agents/blog-reviewer.md` を参照してください。
+| エージェント名   | 説明                                         | 詳細ドキュメント                                         |
+|------------------|----------------------------------------------|----------------------------------------------------------|
+| `weatherAgent`   | 天気情報を提供するAIエージェント            | [`agents/weather.md`](./weather.md)                      |
 
 ## 依存関係
 
-- `./weather`: `weatherAgent` 用。
-- `./pr-reviewer`: `prReviewerAgent` 用。
-- `./blog-reviewer`: `blogReviewerAgent` 用。
+- `./weather`

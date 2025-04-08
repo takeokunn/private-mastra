@@ -1,27 +1,33 @@
-# `src/mastra/index.ts` のドキュメント
+# `src/mastra/index.ts` ドキュメント
 
-このファイルは、Mastraインスタンスを初期化し、エクスポートするためのメインエントリーポイントとして機能します。
+このファイルは、Mastraのメインエントリーポイントであり、`weatherAgent`のみを登録した`mastra`インスタンスを初期化・エクスポートします。
 
 ## 概要
 
-コアとなる `Mastra` クラス、`createLogger` 関数、および定義されたエージェント (`weatherAgent`) をインポートします。その後、単一の `mastra` インスタンスを設定し、エクスポートします。
+- `Mastra`クラスと`createLogger`をインポート。
+- `weatherAgent`のみをインポート。
+- `weatherAgent`を登録した`mastra`インスタンスを作成。
+- `mastra`をエクスポート。
 
 ## エクスポート
 
 ### `mastra`
 
-`Mastra` クラスのインスタンス。
+`Mastra`クラスのインスタンス。
 
-- **エージェント:** `weatherAgent` で設定されています。
-- **ロガー:** `createLogger` を使用して、'Mastra' という名前で 'info' レベルのロガーを作成します。
+- **登録エージェント:**
+  - `weatherAgent`
+- **ロガー:** `'Mastra'`という名前で`info`レベルのロガー。
 
-## 使用方法
-
-このインスタンスは、設定されたエージェントと対話するために、アプリケーションの他の場所でインポートできます。
+## 使用例
 
 ```typescript
 import { mastra } from './path/to/mastra/index';
 
-// 例: エージェントとの対話
+// 天気情報の取得
 // mastra.runAgent('weatherAgent', { location: 'Tokyo' });
 ```
+
+## 備考
+
+他のエージェント（PRレビューやブログレビュー）は現状登録されていません。
