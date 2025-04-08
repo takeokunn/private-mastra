@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import { z } from "zod";
 
 import { weatherTool } from "./index";
+import * as fetcherModule from "../utils/fetcher";
 
 describe("Weather Tool", () => {
   describe("weatherTool configuration", () => {
@@ -34,6 +35,32 @@ describe("Weather Tool", () => {
         location: "Tokyo",
       });
       expect(parseResult?.success).toBe(true);
+    });
+  });
+
+  describe("weatherTool.execute", () => {
+    beforeEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("should call getWeather with location and return weather data", async () => {
+      const mockWeather = {
+        temperature: 20,
+        feelsLike: 19,
+        humidity: 60,
+        windSpeed: 5,
+        windGust: 10,
+        conditions: "Mainly clear",
+        location: "Tokyo, Japan",
+      };
+      const spy = vi.spyOn(fetcherModule, "getWeather").mockResolvedValue(mockWeather);
+
+      const result = await weatherTool.execute!({
+        context: { location: "Tokyo" },
+      } as any);
+
+      expect(spy).toHaveBeenCalledWith("Tokyo");
+      expect(result).toEqual(mockWeather);
     });
   });
 });
