@@ -1,6 +1,6 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
-import { executePrReview } from "./execute";
+import { executePrReview } from "../pr-reviewer/execute";
 
 export const prReviewerTool = createTool({
   id: "pr-reviewer",

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { executePrReview } from "./execute";
+import { executePrReview } from "../pr-reviewer/execute";
 
 // モックするデータをここで定義
 const mockDetails = {
