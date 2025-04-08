@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { weatherTool } from "./index";
-import type { GeocodingResponse, WeatherResponse } from "./types";
+import { weatherTool } from "../tools";
+import type { GeocodingResponse, WeatherResponse } from "../types";
 
 /**
  * mock
