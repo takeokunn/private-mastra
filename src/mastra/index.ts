@@ -6,6 +6,6 @@ import { prReviewerAgent } from "./pr-reviewer";
 import { blogReviewerAgent } from "./blog-reviewer";
 
 export const mastra = new Mastra({
-  agents: { weatherAgent, prReviewerAgent, blogReviewerAgent },
+  agents: { weatherAgent },
   logger: createLogger({ name: "Mastra", level: "info" }),
 });
