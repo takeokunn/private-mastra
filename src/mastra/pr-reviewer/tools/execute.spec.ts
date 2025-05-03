@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { executePrReview } from "../pr-reviewer/execute";
+import { executePrReview } from "./execute";
 
 const mockDetails = {
   owner: "owner",
@@ -19,14 +19,15 @@ const mockFiles = [
 const mockDiff = "diff --git a/file1.ts b/file1.ts\n...";
 const mockReportPath = "/tmp/report.org";
 
-vi.mock("../pr-reviewer/fetcher", () => ({
-  fetchPrDetails: vi.fn().mockResolvedValue(mockDetails),
-  fetchPrFiles: vi.fn().mockResolvedValue(mockFiles),
-  fetchPrDiff: vi.fn().mockResolvedValue(mockDiff),
+vi.mock("../utils/fetcher", () => ({
+  getPrDetails: vi.fn(() => mockDetails),
+  getPrDiff: vi.fn(() => mockFiles),
+  getPrFiles: vi.fn(() => mockDiff)
 }));
 
-vi.mock("../pr-reviewer/output", () => ({
-  generatePrReviewReport: vi.fn().mockResolvedValue(mockReportPath),
+vi.mock("../utils/output", () => ({
+  generateOrgReport: vi.fn(() => mockReportPath),
+  writeReportToFile: vi.fn(() => mockReportPath)
 }));
 
 describe("executePrReview", () => {

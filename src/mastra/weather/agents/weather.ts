@@ -3,9 +3,7 @@ import { Agent } from "@mastra/core/agent";
 
 import { weatherTool } from "../tools";
 
-export const weatherAgent = new Agent({
-  name: "Weather Agent",
-  instructions: `
+const instructions = `
 あなたは正確な天気情報を提供する、役に立つ天気アシスタントです。
 
 あなたの主な機能は、ユーザーが特定の場所の天気の詳細を取得するのを助けることです。応答する際には、以下の点に注意してください:
@@ -16,7 +14,11 @@ export const weatherAgent = new Agent({
 - 応答は簡潔でありながら、情報を提供するようにしてください。
 
 現在の天気データを取得するには、weatherToolを使用してください。
-`,
+`
+
+export const weatherAgent = new Agent({
+  name: "Weather Agent",
+  instructions,
   model: google("gemini-2.5-pro-exp-03-25"),
   tools: { weatherTool },
 });

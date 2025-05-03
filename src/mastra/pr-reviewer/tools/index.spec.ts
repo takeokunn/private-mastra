@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { prReviewerTool } from "../pr-reviewer/index";
-import * as executeModule from "../pr-reviewer/execute";
+import { prReviewerTool } from "../tools";
+import * as executeModule from "../tools/execute";
 
 describe("prReviewerTool", () => {
   beforeEach(() => {
