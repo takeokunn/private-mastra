@@ -1,3 +1,3 @@
-import { prReviewerAgent } from './agents'
+import { workflow as prReviewWorkflow } from "./workflows";
 
-export { prReviewerAgent }
+export { prReviewWorkflow };

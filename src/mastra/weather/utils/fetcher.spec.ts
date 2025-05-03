@@ -26,7 +26,7 @@ const createMockResponse = (data: unknown): Response =>
     ok: true,
     status: 200,
     json: async () => data,
-  } as Response);
+  }) as Response;
 
 describe("getWeather", () => {
   beforeEach(() => {

@@ -1,3 +1,3 @@
-import { weatherAgent } from './weather'
+import { weatherAgent } from "./weather";
 
-export { weatherAgent }
+export { weatherAgent };

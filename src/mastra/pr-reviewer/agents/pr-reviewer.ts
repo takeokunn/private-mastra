@@ -1,9 +1,7 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 
-import { prReviewerTool } from "../tools";
-
-export const prReviewerAgent = new Agent({
+export const pullRequestReviewerAgent = new Agent({
   name: "Pull Request Agent",
   instructions: `
 あなたはGitHubのプルリクエストレビューを担当する熟練のソフトウェア開発者です。
@@ -12,6 +10,5 @@ export const prReviewerAgent = new Agent({
 実行が成功したら、生成されたレポートファイルの保存場所をユーザーに伝えます。
 ツールが失敗した場合は、エラー内容をユーザーに分かりやすく報告します。
 `,
-  model: google("gemini-1.5-pro-latest"),
-  tools: { prReviewerTool },
+  model: google("gemini-2.5-pro-exp-03-25"),
 });

@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 
-import { PrUrlParts, PrDetails, PrFileInfo } from "../types";
+import { PullRequestUrlParts, PullRequestDetails, PullRequestFileInfo } from "../types";
 
 /**
  * GitHub API から PR 詳細を取得する。
@@ -10,7 +10,7 @@ import { PrUrlParts, PrDetails, PrFileInfo } from "../types";
  * @returns PR 詳細情報。
  * @throws {Error} API 呼び出しに失敗した場合。
  */
-export const getPrDetails = async (octokit: Octokit, parts: PrUrlParts): Promise<PrDetails> => {
+export const getPullRequestDetails = async (octokit: Octokit, parts: PullRequestUrlParts): Promise<PullRequestDetails> => {
   try {
     const response = await octokit.pulls.get({
       owner: parts.owner,
@@ -43,7 +43,7 @@ export const getPrDetails = async (octokit: Octokit, parts: PrUrlParts): Promise
  * @returns ファイル情報の配列。
  * @throws {Error} API 呼び出しに失敗した場合。
  */
-export const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<PrFileInfo[]> => {
+export const getPullRequestFiles = async (octokit: Octokit, parts: PullRequestUrlParts): Promise<PullRequestFileInfo[]> => {
   try {
     const response = await octokit.pulls.listFiles({
       owner: parts.owner,
@@ -71,7 +71,7 @@ export const getPrFiles = async (octokit: Octokit, parts: PrUrlParts): Promise<P
  * @returns diff 文字列。
  * @throws {Error} API 呼び出しに失敗した場合。
  */
-export const getPrDiff = async (octokit: Octokit, parts: PrUrlParts): Promise<string> => {
+export const getPullRequestDiff = async (octokit: Octokit, parts: PullRequestUrlParts): Promise<string> => {
   try {
     const response = await octokit.pulls.get({
       owner: parts.owner,

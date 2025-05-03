@@ -2,12 +2,14 @@ import { createLogger } from "@mastra/core/logger";
 import { Mastra } from "@mastra/core/mastra";
 
 import { weatherAgent } from "./weather";
-import { prReviewerAgent } from "./pr-reviewer";
+import { prReviewWorkflow } from "./pr-reviewer";
 
 export const mastra = new Mastra({
   agents: {
     weatherAgent,
-    prReviewerAgent,
+  },
+  workflows: {
+    prReviewWorkflow
   },
   logger: createLogger({ name: "Mastra", level: "info" }),
 });

@@ -1,10 +1,10 @@
-export type PrUrlParts = {
+export type PullRequestUrlParts = {
   owner: string;
   repo: string;
   pull_number: number;
 };
 
-export type PrDetails = {
+export type PullRequestDetails = {
   owner: string;
   repo: string;
   pull_number: number;
@@ -15,7 +15,7 @@ export type PrDetails = {
   head_sha: string;
 };
 
-export type PrFileInfo = {
+export type PullRequestFileInfo = {
   filename: string;
   status: string; // "added", "modified", "removed", etc.
   changes: number;

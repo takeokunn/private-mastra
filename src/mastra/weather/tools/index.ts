@@ -1,3 +1,3 @@
-import { weatherTool } from './weather'
+import { weatherTool } from "./weather";
 
-export { weatherTool }
+export { weatherTool };

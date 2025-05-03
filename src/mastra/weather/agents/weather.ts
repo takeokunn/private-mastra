@@ -14,7 +14,7 @@ const instructions = `
 - 応答は簡潔でありながら、情報を提供するようにしてください。
 
 現在の天気データを取得するには、weatherToolを使用してください。
-`
+`;
 
 export const weatherAgent = new Agent({
   name: "Weather Agent",

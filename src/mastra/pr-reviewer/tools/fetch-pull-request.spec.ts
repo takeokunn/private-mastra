@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { executePrReview } from "./execute";
+import { fetchPullRequest } from "./fetch-pull-request";
 
 const mockDetails = {
   owner: "owner",
@@ -12,9 +12,7 @@ const mockDetails = {
   head_sha: "head123",
 };
 
-const mockFiles = [
-  { filename: "file1.ts", status: "modified", changes: 10, additions: 5, deletions: 5 },
-];
+const mockFiles = [{ filename: "file1.ts", status: "modified", changes: 10, additions: 5, deletions: 5 }];
 
 const mockDiff = "diff --git a/file1.ts b/file1.ts\n...";
 const mockReportPath = "/tmp/report.org";
@@ -22,22 +20,22 @@ const mockReportPath = "/tmp/report.org";
 vi.mock("../utils/fetcher", () => ({
   getPrDetails: vi.fn(() => mockDetails),
   getPrDiff: vi.fn(() => mockFiles),
-  getPrFiles: vi.fn(() => mockDiff)
+  getPrFiles: vi.fn(() => mockDiff),
 }));
 
 vi.mock("../utils/output", () => ({
   generateOrgReport: vi.fn(() => mockReportPath),
-  writeReportToFile: vi.fn(() => mockReportPath)
+  writeReportToFile: vi.fn(() => mockReportPath),
 }));
 
-describe("executePrReview", () => {
+describe("fetchPullRequest", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
   it("fetches PR details, files, diff and generates report", async () => {
     const prUrl = "https://github.com/owner/repo/pull/123";
-    const result = await executePrReview(prUrl);
+    const result = await fetchPullRequest(prUrl);
 
     expect(result).toEqual({ reportPath: mockReportPath });
   });
