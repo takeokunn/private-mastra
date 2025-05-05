@@ -12,7 +12,7 @@ export const step = (reviewType: ReviewType) => {
     .with("architecture", () => WORKFLOW.REVIEW_AGENT.ARCHITECTURE)
     .with("code_quality", () => WORKFLOW.REVIEW_AGENT.CODE_QUALITY)
     .with("performance", () => WORKFLOW.REVIEW_AGENT.PERFORMANCE)
-    .with("security", () => WORKFLOW.REVIEW_AGENT.SECURITY_QUALITY)
+    .with("security", () => WORKFLOW.REVIEW_AGENT.SECURITY)
     .with("testing", () => WORKFLOW.REVIEW_AGENT.TESTING)
     .exhaustive();
 

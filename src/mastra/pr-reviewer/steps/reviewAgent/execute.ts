@@ -9,9 +9,9 @@ import { WORKFLOW } from "../../const";
  */
 export const execute = async (context: WorkflowContext, agent: Agent): Promise<ReviewResponse> => {
   const { diff } = context.getStepResult<PullRequest>(WORKFLOW.FETCH_PULL_REQUEST);
-  console.log(diff);
+
   const prompt = `
-    以下のdiffをレビューして
+    # diff
 
     ${diff}
     `;
@@ -20,6 +20,5 @@ export const execute = async (context: WorkflowContext, agent: Agent): Promise<R
       review: z.string(),
     }),
   });
-  console.log(result.object.review);
   return { review: result.object.review };
 };

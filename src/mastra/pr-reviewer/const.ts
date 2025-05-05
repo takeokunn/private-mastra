@@ -5,7 +5,7 @@ export const WORKFLOW = {
     ARCHITECTURE: "review-agent-architecture",
     CODE_QUALITY: "review-agent-code-quality",
     PERFORMANCE: "review-agent-performance",
-    SECURITY_QUALITY: "review-agent-security-quality",
+    SECURITY: "review-agent-security",
     TESTING: "review-agent-testing",
   },
 };
