@@ -3,6 +3,8 @@ import { PullRequestDetails, PullRequestFileInfo } from "@src/mastra/pr-reviewer
 const generateMeta = (prDetails: PullRequestDetails): string => {
   const reportDate = new Date().toISOString();
   return `#+TITLE: プルリクエストレビュー: ${prDetails.title}
+#+STARTUP: content
+#+STARTUP: fold
 #+DATE: ${reportDate}
 #+AUTHOR: AI レビューアシスタント (via prReviewerTool)
 #+PROPERTY: PR_URL ${prDetails.html_url}
@@ -23,6 +25,7 @@ const generateSummary = (files: PullRequestFileInfo[]): string => {
   const fileSummary = files.map((f) => `- ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})`).join("\n");
   return `* 変更概要
 ** 変更ファイル (${files.length})
+
 ${fileSummary || "変更されたファイルがないか、ファイルリストを取得できませんでした。"}`;
 };
 
@@ -40,10 +43,16 @@ export const generateOrgReport = (
 ): string => {
   return `${generateMeta(prDetails)}
 ${generateDescription(prDetails)}
+
 ${generateSummary(files)}
+
 ${architectureReview}
+
 ${codeQualityReview}
+
 ${performanceReview}
+
 ${securityReview}
+
 ${testingReview}`;
 };

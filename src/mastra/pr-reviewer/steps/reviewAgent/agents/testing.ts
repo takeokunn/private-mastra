@@ -40,6 +40,10 @@ const instructions = `
 
 \`\`\`org
 * テスト・CI/CD整合性（Testing & Toolchain）
+** コメント
+
+[総評を可能な限り箇条書きで出力]
+
 ** 評価
 
 [問題がある箇所を可能な限り箇条書きで出力]
@@ -47,16 +51,12 @@ const instructions = `
 ** 構造的懸念・改善提案
 
 [提案を可能な限り箇条書きで出力]
-
-** コメント
-
-[総評を可能な限り箇条書きで出力]
 \`\`\`
 `;
 
 export const agent = new Agent({
   name: "Pull Request Agent",
   instructions,
-  model: google("gemini-2.5-pro-exp-03-25"),
+  model: google("gemini-1.5-flash-latest"),
   tools: { githubTool },
 });
