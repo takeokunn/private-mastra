@@ -53,6 +53,7 @@ const instructions = `
 # 出力フォーマット（org）
 
 以下の形式で出力してください。
+また、人間が読みやすいように文章は適宜改行してください。
 
 \`\`\`org
 * 設計・責務分離（Architecture & Modularity）

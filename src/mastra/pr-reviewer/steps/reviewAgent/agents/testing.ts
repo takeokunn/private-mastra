@@ -37,6 +37,7 @@ const instructions = `
 # 出力フォーマット（org）
 
 以下の形式で出力してください。
+また、人間が読みやすいように文章は適宜改行してください。
 
 \`\`\`org
 * テスト・CI/CD整合性（Testing & Toolchain）

@@ -16,6 +16,8 @@ export const execute = async (context: WorkflowContext, agent: Agent): Promise<R
 - owner: ${details.owner}
 - repo: ${details.repo}
 - pull_number: ${details.pull_number}
+- title: ${details.title}
+- body: ${details.body}
 - base_sha: ${details.base_sha}
 - head_sha: ${details.head_sha}
 

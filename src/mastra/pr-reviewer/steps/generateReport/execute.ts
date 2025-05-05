@@ -8,7 +8,8 @@ import { generateOrgReport } from "./utils/template";
  * PRの情報を取得する
  */
 export const execute = async (context: WorkflowContext): Promise<GenerateReportResponse> => {
-  const { details, files } = context.getStepResult<PullRequest>(WORKFLOW.FETCH_PULL_REQUEST);
+  const { details } = context.getStepResult<PullRequest>(WORKFLOW.FETCH_PULL_REQUEST);
+  const { review: summaryReview } = context.getStepResult<ReviewResponse>(WORKFLOW.REVIEW_AGENT.SUMMARY);
   const { review: architectureReview } = context.getStepResult<ReviewResponse>(WORKFLOW.REVIEW_AGENT.ARCHITECTURE);
   const { review: codeQualityReview } = context.getStepResult<ReviewResponse>(WORKFLOW.REVIEW_AGENT.CODE_QUALITY);
   const { review: performanceReview } = context.getStepResult<ReviewResponse>(WORKFLOW.REVIEW_AGENT.PERFORMANCE);
@@ -17,7 +18,7 @@ export const execute = async (context: WorkflowContext): Promise<GenerateReportR
 
   const report = generateOrgReport(
     details,
-    files,
+    summaryReview,
     architectureReview,
     codeQualityReview,
     performanceReview,

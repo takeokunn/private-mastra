@@ -13,6 +13,7 @@ const workflow = new Workflow({
 });
 
 const reviewAgents = {
+  summary: reviewAgent("summary"),
   architecture: reviewAgent("architecture"),
   codeQuality: reviewAgent("code_quality"),
   performance: reviewAgent("performance"),
@@ -26,12 +27,14 @@ workflow
   .after([fetchPullRequest])
 
   // レビューエージェント実行
+  .step(reviewAgents.summary)
   .step(reviewAgents.architecture)
   .step(reviewAgents.codeQuality)
   .step(reviewAgents.performance)
   .step(reviewAgents.security)
   .step(reviewAgents.testing)
   .after([
+    reviewAgents.summary,
     reviewAgents.architecture,
     reviewAgents.codeQuality,
     reviewAgents.performance,

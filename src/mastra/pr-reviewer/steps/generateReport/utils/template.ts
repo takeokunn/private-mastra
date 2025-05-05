@@ -1,4 +1,4 @@
-import { PullRequestDetails, PullRequestFileInfo } from "@src/mastra/pr-reviewer/types";
+import { PullRequestDetails } from "@src/mastra/pr-reviewer/types";
 
 const generateMeta = (prDetails: PullRequestDetails): string => {
   const reportDate = new Date().toISOString();
@@ -14,27 +14,12 @@ const generateMeta = (prDetails: PullRequestDetails): string => {
 #+PROPERTY: HEAD_SHA ${prDetails.head_sha}`;
 };
 
-const generateDescription = (prDetails: PullRequestDetails): string => {
-  return `* PR 詳細
-
-- *タイトル*: ${prDetails.title}
-- *URL*: ${prDetails.html_url}`;
-};
-
-const generateSummary = (files: PullRequestFileInfo[]): string => {
-  const fileSummary = files.map((f) => `- ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})`).join("\n");
-  return `* 変更概要
-** 変更ファイル (${files.length})
-
-${fileSummary || "変更されたファイルがないか、ファイルリストを取得できませんでした。"}`;
-};
-
 /**
  * Org Mode 形式のレビューレポートを生成する。
  */
 export const generateOrgReport = (
   prDetails: PullRequestDetails,
-  files: PullRequestFileInfo[],
+  summaryReview: string,
   architectureReview: string,
   codeQualityReview: string,
   performanceReview: string,
@@ -42,17 +27,10 @@ export const generateOrgReport = (
   testingReview: string,
 ): string => {
   return `${generateMeta(prDetails)}
-${generateDescription(prDetails)}
-
-${generateSummary(files)}
-
+${summaryReview}
 ${architectureReview}
-
 ${codeQualityReview}
-
 ${performanceReview}
-
 ${securityReview}
-
 ${testingReview}`;
 };
