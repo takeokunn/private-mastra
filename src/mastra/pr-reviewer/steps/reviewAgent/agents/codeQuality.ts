@@ -1,6 +1,9 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 import { tool as githubTool } from "../integrations/github";
+import { outputFormat } from "./output";
+
+const output = outputFormat("コード品質および可読性（Style & Clean Code）")
 
 const instructions = `
 # 命令
@@ -41,25 +44,7 @@ const instructions = `
 - 指摘は機械的に厳密である必要はなく、プロジェクトのスタイルに明確に違反していなければ柔軟に判断して構いません。
 - 必要に応じて githubTool を使い、PRの全体構成・Diff範囲外の周辺コードも確認してください。
 
-# 出力フォーマット（org）
-
-以下の形式で出力してください。
-また、人間が読みやすいように文章は適宜改行してください。
-
-\`\`\`org
-* コード品質および可読性（Style & Clean Code）
-** コメント
-
-[総評を可能な限り箇条書きで出力]
-
-** 評価
-
-[問題がある箇所を可能な限り箇条書きで出力]
-
-** 構造的懸念・改善提案
-
-[提案を可能な限り箇条書きで出力]
-\`\`\`
+${output}
 `;
 
 export const agent = new Agent({

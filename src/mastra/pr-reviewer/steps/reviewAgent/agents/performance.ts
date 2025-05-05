@@ -1,6 +1,9 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 import { tool as githubTool } from "../integrations/github";
+import { outputFormat } from "./output";
+
+const output = outputFormat("パフォーマンスとリソース効率（Performance & Resource Efficiency）")
 
 const instructions = `
 # 命令
@@ -41,24 +44,7 @@ Pull Requestの変更内容について、**パフォーマンスとリソース
 - 明確な問題がない場合でも、改善余地や潜在的リスクについて**建設的な観点**でコメントしてください。
 - 必要に応じて githubTool を使い、PRの全体構成・Diff範囲外の周辺コードも確認してください。
 
-# 出力フォーマット（org）
-
-以下の形式で出力してください。
-
-\`\`\`org
-* パフォーマンスとリソース効率（Performance & Resource Efficiency）
-** コメント
-
-[総評を可能な限り箇条書きで出力]
-
-** 評価
-
-[問題がある箇所を可能な限り箇条書きで出力]
-
-** 構造的懸念・改善提案
-
-[提案を可能な限り箇条書きで出力]
-\`\`\`
+${output}
 `;
 
 export const agent = new Agent({

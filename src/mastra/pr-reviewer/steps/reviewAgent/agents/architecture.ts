@@ -1,6 +1,9 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 import { tool as githubTool } from "../integrations/github";
+import { outputFormat } from "./output";
+
+const output = outputFormat("設計・責務分離（Architecture & Modularity）")
 
 const instructions = `
 # 命令
@@ -50,25 +53,7 @@ const instructions = `
 - 小規模な修正でも、 **設計意図の逸脱** や将来的な問題の萌芽がないかを丁寧に評価してください。
 - 必要に応じて githubTool を使い、PRの全体構成・Diff範囲外の周辺コードも確認してください。
 
-# 出力フォーマット（org）
-
-以下の形式で出力してください。
-また、人間が読みやすいように文章は適宜改行してください。
-
-\`\`\`org
-* 設計・責務分離（Architecture & Modularity）
-** コメント
-
-[総評を可能な限り箇条書きで出力]
-
-** 評価
-
-[問題がある箇所を可能な限り箇条書きで出力]
-
-** 構造的懸念・改善提案
-
-[提案を可能な限り箇条書きで出力]
-\`\`\`
+${output}
 `;
 
 export const agent = new Agent({

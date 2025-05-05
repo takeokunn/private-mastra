@@ -8,8 +8,6 @@ const generateMeta = (prDetails: PullRequestDetails): string => {
 #+DATE: ${reportDate}
 #+AUTHOR: AI レビューアシスタント (via prReviewerTool)
 #+PROPERTY: PR_URL ${prDetails.html_url}
-#+PROPERTY: REPO ${prDetails.owner}/${prDetails.repo}
-#+PROPERTY: PR_NUMBER ${prDetails.pull_number}
 #+PROPERTY: BASE_SHA ${prDetails.base_sha}
 #+PROPERTY: HEAD_SHA ${prDetails.head_sha}`;
 };
@@ -19,6 +17,7 @@ const generateMeta = (prDetails: PullRequestDetails): string => {
  */
 export const generateOrgReport = (
   prDetails: PullRequestDetails,
+  result: string,
   summaryReview: string,
   architectureReview: string,
   codeQualityReview: string,
@@ -27,6 +26,9 @@ export const generateOrgReport = (
   testingReview: string,
 ): string => {
   return `${generateMeta(prDetails)}
+* Merge可否
+
+${result}
 ${summaryReview}
 ${architectureReview}
 ${codeQualityReview}

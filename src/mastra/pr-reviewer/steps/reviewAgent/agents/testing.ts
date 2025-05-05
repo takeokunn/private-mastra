@@ -1,6 +1,9 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 import { tool as githubTool } from "../integrations/github";
+import { outputFormat } from "./output";
+
+const output = outputFormat("テスト・CI/CD整合性（Testing & Toolchain）")
 
 const instructions = `
 # 命令
@@ -34,25 +37,7 @@ const instructions = `
 - 「CIが壊れていないか」だけでなく、「CIが壊れやすくなっていないか（脆弱化）」にも注意を払ってください。
 - 必要に応じて githubTool を使い、PRの全体構成・Diff範囲外の周辺コードも確認してください。
 
-# 出力フォーマット（org）
-
-以下の形式で出力してください。
-また、人間が読みやすいように文章は適宜改行してください。
-
-\`\`\`org
-* テスト・CI/CD整合性（Testing & Toolchain）
-** コメント
-
-[総評を可能な限り箇条書きで出力]
-
-** 評価
-
-[問題がある箇所を可能な限り箇条書きで出力]
-
-** 構造的懸念・改善提案
-
-[提案を可能な限り箇条書きで出力]
-\`\`\`
+${output}
 `;
 
 export const agent = new Agent({

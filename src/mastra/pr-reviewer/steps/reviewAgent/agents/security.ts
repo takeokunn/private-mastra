@@ -1,6 +1,9 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 import { tool as githubTool } from "../integrations/github";
+import { outputFormat } from "./output";
+
+const output = outputFormat("セキュリティ・安全性（Security）")
 
 const instructions = `
 # 命令
@@ -25,25 +28,7 @@ const instructions = `
 - 検出された問題が既知のセキュリティ原則（OWASP Top 10など）に該当する場合は、その分類も明示してください。
 - 必要に応じて githubTool を使い、PRの全体構成・Diff範囲外の周辺コードも確認してください。
 
-# 出力フォーマット（org）
-
-以下の形式で出力してください。
-また、人間が読みやすいように文章は適宜改行してください。
-
-\`\`\`org
-* セキュリティ・安全性（Security）
-** コメント
-
-[総評を可能な限り箇条書きで出力]
-
-** 評価
-
-[問題がある箇所を可能な限り箇条書きで出力]
-
-** 構造的懸念・改善提案
-
-[提案を可能な限り箇条書きで出力]
-\`\`\`
+${output}
 `;
 
 export const agent = new Agent({
