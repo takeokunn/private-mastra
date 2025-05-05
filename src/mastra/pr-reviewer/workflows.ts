@@ -1,7 +1,7 @@
 import { Workflow } from "@mastra/core";
 import { z } from "zod";
 import { workflowInputSchema } from "./schema";
-import { fetchPullRequest } from "./steps/fetchPullRequest";
+import { step as fetchPullRequest } from "./steps/fetchPullRequest";
 import { step as generateReport } from "./steps/generateReport";
 import { step as reviewAgent } from "./steps/reviewAgent";
 

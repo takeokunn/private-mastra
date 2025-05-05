@@ -3,7 +3,7 @@ import { fetchPullRequestOutputSchema, workflowInputSchema } from "@src/mastra/p
 import { execute } from "./execute";
 import { WORKFLOW } from "@src/mastra/pr-reviewer/const";
 
-export const fetchPullRequest = new Step({
+export const step = new Step({
   id: WORKFLOW.FETCH_PULL_REQUEST,
   inputSchema: workflowInputSchema,
   outputSchema: fetchPullRequestOutputSchema,

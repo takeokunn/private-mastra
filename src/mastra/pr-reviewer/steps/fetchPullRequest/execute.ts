@@ -4,9 +4,6 @@ import { getPullRequestDetails, getPullRequestFiles, getPullRequestDiff } from "
 import type { PullRequest } from "@src/mastra/pr-reviewer/types";
 import { WorkflowContext } from "@mastra/core";
 
-/**
- * PRの情報を取得する
- */
 export const execute = async (context: WorkflowContext): Promise<PullRequest> => {
   const url = context.triggerData?.inputSchema.url;
 
