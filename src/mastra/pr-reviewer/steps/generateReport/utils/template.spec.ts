@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from "vitest";
 import { generateOrgReport } from "./template";
 import type { PullRequestDetails } from "@src/mastra/pr-reviewer/types";
 
-// Mock Date to ensure consistent output for #+DATE:
 const MOCK_DATE = new Date("2025-05-06T10:00:00.000Z");
 vi.setSystemTime(MOCK_DATE);
 
@@ -16,20 +15,6 @@ describe("generateOrgReport", () => {
     html_url: "https://github.com/test-owner/test-repo/pull/123",
     base_sha: "base1234567890abcdef",
     head_sha: "head1234567890abcdef",
-    created_at: "2025-05-05T12:00:00Z",
-    updated_at: "2025-05-05T13:00:00Z",
-    merged_at: null,
-    closed_at: null,
-    state: "open",
-    user: { login: "test-user" },
-    assignees: [],
-    requested_reviewers: [],
-    labels: [],
-    draft: false,
-    commits: 1,
-    additions: 10,
-    deletions: 5,
-    changed_files: 2,
   };
 
   const mockSummary = "* Summary\nThis is the summary review.";
@@ -79,30 +64,36 @@ describe("generateOrgReport", () => {
       mockTesting,
     );
 
-    // Check if all sections are present and in order
-    const expectedOrder = [
+    // Generate expected metadata to find where the actual content starts
+    const expectedMeta = `#+TITLE: プルリクエストレビュー: ${mockPrDetails.title}
+#+STARTUP: content
+#+STARTUP: fold
+#+DATE: ${MOCK_DATE.toISOString()}
+#+AUTHOR: AI レビューアシスタント (via prReviewerTool)
+#+PROPERTY: PR_URL ${mockPrDetails.html_url}
+#+PROPERTY: REPO ${mockPrDetails.owner}/${mockPrDetails.repo}
+#+PROPERTY: PR_NUMBER ${mockPrDetails.pull_number}
+#+PROPERTY: BASE_SHA ${mockPrDetails.base_sha}
+#+PROPERTY: HEAD_SHA ${mockPrDetails.head_sha}`;
+
+    // Construct the expected content part by joining the sections with newlines
+    const expectedContent = [
       mockSummary,
       mockArchitecture,
       mockCodeQuality,
       mockPerformance,
       mockSecurity,
       mockTesting,
-    ];
-    const reportLines = report.split("\n");
+    ].join("\n");
 
-    let currentIndex = -1;
-    for (const section of expectedOrder) {
-      // Find the starting line of the section
-      const sectionStartIndex = reportLines.findIndex((line) =>
-        line.startsWith(section.split("\n")[0]), // Check based on the first line (e.g., "* Summary")
-      );
-      expect(sectionStartIndex).toBeGreaterThan(currentIndex); // Ensure order
-      expect(report).toContain(section); // Ensure the full section content is present
-      currentIndex = sectionStartIndex;
-    }
+    // Construct the full expected report
+    const expectedReport = `${expectedMeta}\n${expectedContent}`;
+
+    // Compare the generated report with the expected report
+    expect(report).toBe(expectedReport);
   });
 
-  it("should handle empty review strings", () => {
+  it("should handle empty review strings correctly", () => {
     const report = generateOrgReport(
       mockPrDetails,
       "", // Empty summary
@@ -115,14 +106,36 @@ describe("generateOrgReport", () => {
 
     expect(report).toContain(mockArchitecture);
     expect(report).toContain(mockPerformance);
+    expect(report).toContain(mockArchitecture);
+    expect(report).toContain(mockPerformance);
     expect(report).toContain(mockTesting);
-    // Check that empty strings result in effectively skipping those sections in the output structure
-    // (though they will still be present as empty lines between other sections)
-    const lines = report.split('\n');
-    const metaEndIndex = lines.findIndex(line => line.startsWith('#+PROPERTY: HEAD_SHA'));
-    expect(lines[metaEndIndex + 1]).toBe(mockArchitecture); // Architecture follows meta directly if summary is empty
-    expect(lines.find(line => line.includes("Summary"))).toBeUndefined(); // No summary header/content
-    expect(lines.find(line => line.includes("Code Quality"))).toBeUndefined();
-    expect(lines.find(line => line.includes("Security"))).toBeUndefined();
+
+    // Generate expected metadata
+    const expectedMeta = `#+TITLE: プルリクエストレビュー: ${mockPrDetails.title}
+#+STARTUP: content
+#+STARTUP: fold
+#+DATE: ${MOCK_DATE.toISOString()}
+#+AUTHOR: AI レビューアシスタント (via prReviewerTool)
+#+PROPERTY: PR_URL ${mockPrDetails.html_url}
+#+PROPERTY: REPO ${mockPrDetails.owner}/${mockPrDetails.repo}
+#+PROPERTY: PR_NUMBER ${mockPrDetails.pull_number}
+#+PROPERTY: BASE_SHA ${mockPrDetails.base_sha}
+#+PROPERTY: HEAD_SHA ${mockPrDetails.head_sha}`;
+
+    // Construct the expected content part with empty strings
+    const expectedContent = [
+      "", // Empty summary
+      mockArchitecture,
+      "", // Empty code quality
+      mockPerformance,
+      "", // Empty security
+      mockTesting,
+    ].join("\n");
+
+    // Construct the full expected report
+    const expectedReport = `${expectedMeta}\n${expectedContent}`;
+
+    // Compare the generated report with the expected report
+    expect(report).toBe(expectedReport);
   });
 });
