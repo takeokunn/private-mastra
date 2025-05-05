@@ -9,7 +9,7 @@ export const mastra = new Mastra({
     weatherAgent,
   },
   workflows: {
-    prReviewWorkflow
+    prReviewWorkflow,
   },
   logger: createLogger({ name: "Mastra", level: "info" }),
 });

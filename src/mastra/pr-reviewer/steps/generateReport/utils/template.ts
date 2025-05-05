@@ -1,19 +1,5 @@
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
-import { PrDetails, PrFileInfo } from "../types";
+import { PullRequestDetails, PullRequestFileInfo } from "@src/mastra/pr-reviewer/types";
 
-const OUTPUT_DIR = ".output"; // レポート出力ディレクトリ
-
-/**
- * レポート用のタイムスタンプ付きファイル名を生成する。 */
-/**
- * @returns 生成されたファイル名 (例: "20230101120000_pull_request.org")。
- */
-export const generateReportFilename = (): string => {
-  const now = new Date();
-  const timestamp = now.toISOString().replace(/[-:.]/g, "").slice(0, 14); // YYYYMMDDHHMMSS
-  return `${timestamp}_pull_request.org`;
-};
 
 /**
  * Org Mode 形式のレビューレポートを生成する。
@@ -24,7 +10,7 @@ export const generateReportFilename = (): string => {
  * @param diff PR の差分文字列。
  * @returns 生成された Org Mode レポート文字列。
  */
-export const generateOrgReport = (prDetails: PrDetails, files: PrFileInfo[], diff: string): string => {
+export const generateOrgReport = (prDetails: PullRequestDetails, files: PullRequestFileInfo[], diff: string): string => {
   const reportDate = new Date().toISOString();
   const fileSummary = files.map((f) => `- ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})`).join("\n");
   const staticAnalysisResult = "[静的解析結果プレースホルダー - 未実装]";
@@ -96,23 +82,4 @@ ${fileSummary || "変更されたファイルがないか、ファイルリス�
   - [ ] 詳細分析のためのリポジトリクローン/チェックアウトを実装。
   - [ ] 分析結果に基づいて Org Mode レポートの構造と内容を改善。
 `;
-};
-
-/**
- * レポート内容をファイルに書き込む。
- */
-export const writeReportToFile = async (reportContent: string): Promise<string> => {
-  const projectRoot = process.cwd();
-  const filename = generateReportFilename();
-  const outputPath = path.join(projectRoot, OUTPUT_DIR, filename);
-
-  try {
-    await mkdir(OUTPUT_DIR, { recursive: true }); // 出力ディレクトリを作成 (存在してもOK)
-    await writeFile(outputPath, reportContent);
-    console.log(`レポートが正常に生成されました: ${outputPath}`);
-    return outputPath;
-  } catch (error) {
-    console.error("レポートファイルの書き込みエラー:", error);
-    throw new Error("レポートファイルの書き込みに失敗しました。");
-  }
 };

@@ -1,11 +1,7 @@
-import type { PullRequestUrlParts } from "../types";
+import type { PullRequestUrlParts } from "@src/mastra/pr-reviewer/types";
 
 /**
  * GitHub PR URL を解析し、owner, repo, pull number を抽出する
- *
- * @param url 解析対象の PR URL。
- * @returns 解析された PR URL の構成要素。
- * @throws {Error} 不正な URL フォーマットの場合。
  */
 export const parsePullRequestUrl = (url: string): PullRequestUrlParts => {
   const match = url.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/);

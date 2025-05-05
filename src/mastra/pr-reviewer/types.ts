@@ -17,8 +17,23 @@ export type PullRequestDetails = {
 
 export type PullRequestFileInfo = {
   filename: string;
-  status: string; // "added", "modified", "removed", etc.
+  status: "added" | "removed" | "modified" | "renamed" | "copied" | "changed" | "unchanged";
   changes: number;
   additions: number;
   deletions: number;
+};
+
+export type PullRequest = {
+  parts: PullRequestUrlParts;
+  details: PullRequestDetails;
+  files: PullRequestFileInfo[];
+  diff: string;
+};
+
+export type ReviewResponse = {
+  review: string;
+};
+
+export type GenerateReportResponse = {
+  path: string;
 };

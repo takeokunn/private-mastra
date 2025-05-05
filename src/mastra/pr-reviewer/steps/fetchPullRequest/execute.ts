@@ -1,20 +1,17 @@
 import { Octokit } from "@octokit/rest";
-import { parsePullRequestUrl } from "../utils/parse";
-import { getPullRequestDetails, getPullRequestFiles, getPullRequestDiff } from "../utils/fetcher";
-import type { PullRequestUrlParts, PullRequestDetails, PullRequestFileInfo } from "../types"
+import { parsePullRequestUrl } from "./utils/parse";
+import { getPullRequestDetails, getPullRequestFiles, getPullRequestDiff } from "./utils/fetcher";
+import type { PullRequest } from "@src/mastra/pr-reviewer/types";
+import { WorkflowContext } from "@mastra/core";
 
 /**
  * PRの情報を取得する
  */
-export const fetchPullRequest = async (url: string): Promise<{
-  parts: PullRequestUrlParts,
-  details: PullRequestDetails,
-  files: PullRequestFileInfo[],
-  diff: string,
-}> => {
+export const execute = async (context: WorkflowContext): Promise<PullRequest> => {
+  const url = context.triggerData?.inputSchema.url;
+
   const githubToken = process.env.GITHUB_TOKEN;
   if (!githubToken) {
-    console.error("ツール実行失敗: 環境変数 GITHUB_TOKEN が設定されていません。");
     throw new Error("[MissingToken] 環境変数 GITHUB_TOKEN が設定されていません。");
   }
 
@@ -22,7 +19,6 @@ export const fetchPullRequest = async (url: string): Promise<{
 
   try {
     const parts = parsePullRequestUrl(url);
-    console.log(`Fetching details for PR: ${parts.owner}/${parts.repo}#${parts.pull_number}`);
 
     const details = await getPullRequestDetails(octokit, parts);
     const files = await getPullRequestFiles(octokit, parts);
