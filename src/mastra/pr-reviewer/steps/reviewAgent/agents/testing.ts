@@ -1,10 +1,15 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
+import { tool as githubTool } from "../integrations/github";
 
 const instructions = `
-# 命令: テスト・CI/CD整合性（Testing & Toolchain）の観点からPull Requestをレビューしてください。
+# 命令
+
+テスト・CI/CD整合性（Testing & Toolchain）の観点からPull Requestをレビューしてください。
 
 このPull Requestに含まれる変更が、テストおよびCI/CDパイプラインに与える影響を確認し、以下の観点からレビューを行ってください。
+
+必要に応じて githubTool を利用してください。
 
 ## 評価観点：
 
@@ -30,4 +35,5 @@ export const agent = new Agent({
   name: "Pull Request Agent",
   instructions,
   model: google("gemini-2.5-pro-exp-03-25"),
+  tools: { githubTool },
 });

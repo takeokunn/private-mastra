@@ -58,9 +58,9 @@ describe("getPullRequestDetails", () => {
     const apiError = new Error("API Error");
     (mockOctokit.pulls.get as unknown as Mock).mockRejectedValue(apiError);
 
-    await expect(() => getPullRequestDetails(mockOctokit, mockParts))
-      .rejects
-      .toThrow("[GitHubApiError] Failed to fetch PR details for test-owner/test-repo#123");
+    await expect(() => getPullRequestDetails(mockOctokit, mockParts)).rejects.toThrow(
+      "[GitHubApiError] Failed to fetch PR details for test-owner/test-repo#123",
+    );
 
     expect(mockOctokit.pulls.get).toHaveBeenCalledWith(expectedArgs);
   });
@@ -122,9 +122,9 @@ describe("getPullRequestFiles", () => {
     const apiError = new Error("Fetch failed");
     (mockOctokit.pulls.listFiles as unknown as Mock).mockRejectedValue(apiError);
 
-    await expect(() => getPullRequestFiles(mockOctokit, mockParts))
-      .rejects
-      .toThrow("[GitHubApiError] Failed to fetch PR files for test-owner/test-repo#123");
+    await expect(() => getPullRequestFiles(mockOctokit, mockParts)).rejects.toThrow(
+      "[GitHubApiError] Failed to fetch PR files for test-owner/test-repo#123",
+    );
 
     expect(mockOctokit.pulls.listFiles).toHaveBeenCalledWith(expectedArgs);
   });
@@ -134,10 +134,10 @@ describe("getPullRequestDiff", () => {
   const expectedArgs = {
     owner: "test-owner",
     repo: "test-repo",
-    pull_number: 123
+    pull_number: 123,
   };
 
-      const mockDiff = `diff --git a/file.txt b/file.txt
+  const mockDiff = `diff --git a/file.txt b/file.txt
 index e69de29..b5a7f7f 100644
 --- a/file.txt
 +++ b/file.txt
@@ -158,9 +158,9 @@ index e69de29..b5a7f7f 100644
     const apiError = new Error("Something went wrong");
     (mockOctokit.pulls.get as unknown as Mock).mockRejectedValue(apiError);
 
-    await expect(() => getPullRequestDiff(mockOctokit, mockParts))
-      .rejects
-      .toThrow("[GitHubApiError] Failed to fetch PR diff for test-owner/test-repo#123");
+    await expect(() => getPullRequestDiff(mockOctokit, mockParts)).rejects.toThrow(
+      "[GitHubApiError] Failed to fetch PR diff for test-owner/test-repo#123",
+    );
 
     expect(mockOctokit.pulls.get).toHaveBeenCalledWith(expectedArgs);
   });

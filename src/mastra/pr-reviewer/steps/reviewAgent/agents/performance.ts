@@ -1,10 +1,15 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
+import { tool as githubTool } from "../integrations/github";
 
 const instructions = `
-# 命令: パフォーマンス・リソース効率（Performance & Resource Efficiency）の観点からPull Requestをレビューしてください。
+# 命令
+
+パフォーマンス・リソース効率（Performance & Resource Efficiency）の観点からPull Requestをレビューしてください。
 
 このPull Requestで導入された変更において、性能面やリソース効率の観点から問題がないかを確認してください。以下の観点に基づき、非効率な設計や不要なオーバーヘッド、改善可能な部分を指摘してください。
+
+必要に応じて githubTool を利用してください。
 
 ## 評価観点：
 
@@ -32,4 +37,5 @@ export const agent = new Agent({
   name: "Pull Request Agent",
   instructions,
   model: google("gemini-2.5-pro-exp-03-25"),
+  tools: { githubTool },
 });

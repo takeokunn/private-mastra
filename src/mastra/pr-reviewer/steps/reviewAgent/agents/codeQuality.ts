@@ -1,8 +1,11 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
+import { tool as githubTool } from "../integrations/github";
 
 const instructions = `
-# 命令: コード品質・可読性（Style & Clean Code）の観点からPull Requestをレビューしてください。
+# 命令
+
+コード品質・可読性（Style & Clean Code）の観点からPull Requestをレビューしてください。
 
 以下はあるPull Requestの変更内容です。この変更に対して、「コード品質・可読性」に関してレビューを行ってください。
 レビューは以下の観点で構成してください：
@@ -12,6 +15,8 @@ const instructions = `
 3. 冗長性・簡潔さ：重複コードがないか、表現が簡潔かつ明確か。
 4. 一貫性：コードスタイルがプロジェクト全体と一貫しているか。
 5. Clean Code原則の遵守：関数の粒度、責務、命名・コメント方針などに問題がないか。
+
+必要に応じて githubTool を利用してください。
 
 # 出力形式
 
@@ -31,4 +36,7 @@ export const agent = new Agent({
   name: "Pull Request Agent",
   instructions,
   model: google("gemini-2.5-pro-exp-03-25"),
+  tools: {
+    githubTool,
+  },
 });

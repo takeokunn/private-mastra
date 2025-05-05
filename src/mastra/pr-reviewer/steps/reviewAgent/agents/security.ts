@@ -1,10 +1,15 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
+import { tool as githubTool } from "../integrations/github";
 
 const instructions = `
-# 命令: セキュリティ・安全性（Security）の観点からPull Requestをレビューしてください。
+# 命令
+
+セキュリティ・安全性（Security）の観点からPull Requestをレビューしてください。
 
 このPull Requestにおいて、セキュリティ上のリスクが新たに導入されていないかを確認してください。以下の具体的な観点に基づいてレビューを行い、発見した問題点とその根本原因、および防止のための実践的な改善提案を記述してください。
+
+必要に応じて githubTool を利用してください。
 
 ## 評価観点：
 
@@ -33,4 +38,5 @@ export const agent = new Agent({
   name: "Pull Request Agent",
   instructions,
   model: google("gemini-2.5-pro-exp-03-25"),
+  tools: { githubTool },
 });

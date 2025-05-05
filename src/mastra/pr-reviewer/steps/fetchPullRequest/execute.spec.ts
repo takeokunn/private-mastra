@@ -10,14 +10,14 @@ const mockParts: PullRequestUrlParts = {
 };
 
 const mockDetails: PullRequestDetails = {
-  owner: 'test-owner',
-  repo: 'test-repo',
+  owner: "test-owner",
+  repo: "test-repo",
   pull_number: 123,
   title: "Fix bug",
   body: "This fixes a bug",
   html_url: "https://github.com/test-owner/test-repo/pull/123",
   base_sha: "base-sha",
-  head_sha: "head-sha"
+  head_sha: "head-sha",
 };
 
 const mockFiles: PullRequestFileInfo[] = [
@@ -53,7 +53,7 @@ describe("execute", () => {
 
   beforeEach(() => {
     process.env.GITHUB_TOKEN = "fake-token";
-  })
+  });
 
   it("fetches all PR info and returns it", async () => {
     process.env.GITHUB_TOKEN = "fake-token";
@@ -71,8 +71,8 @@ describe("execute", () => {
   it("throws an error if GITHUB_TOKEN is not set", async () => {
     delete process.env.GITHUB_TOKEN;
 
-    await expect(() => execute(mockContext))
-      .rejects
-      .toThrow("[MissingToken] 環境変数 GITHUB_TOKEN が設定されていません。");
+    await expect(() => execute(mockContext)).rejects.toThrow(
+      "[MissingToken] 環境変数 GITHUB_TOKEN が設定されていません。",
+    );
   });
 });

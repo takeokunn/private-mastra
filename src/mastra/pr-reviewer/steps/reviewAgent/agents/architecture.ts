@@ -1,8 +1,11 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
+import { tool as githubTool } from "../integrations/github";
 
 const instructions = `
-# 命令: 設計・責務分離（Architecture & Modularity）の観点からPull Requestをレビューしてください。
+# 命令
+
+設計・責務分離（Architecture & Modularity）の観点からPull Requestをレビューしてください。
 
 以下のPull Requestは、既存のソフトウェア設計に対して変更を加えるものです。
 この変更が「設計の妥当性」および「責務の分離」に関して問題を抱えていないかをチェックし、必要に応じて改善提案を行ってください。
@@ -14,6 +17,8 @@ const instructions = `
 3. レイヤ違反：UI層からドメイン層へ直接アクセスする等、アーキテクチャ違反がないか
 4. 拡張性：将来的な機能追加・仕様変更に対して柔軟な構造になっているか
 5. 循環依存：変更によってモジュール間の循環参照が発生していないか
+
+必要に応じて githubTool を利用してください。
 
 # 出力形式
 
@@ -33,4 +38,5 @@ export const agent = new Agent({
   name: "Pull Request Agent",
   instructions,
   model: google("gemini-2.5-pro-exp-03-25"),
+  tools: { githubTool },
 });

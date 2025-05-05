@@ -12,16 +12,17 @@
   "dependencies": {
     "@ai-sdk/google": "^1.2.6",
     "@ai-sdk/react": "^1.2.6",
-    "@mastra/core": "^0.7.0",
-    "@octokit/rest": "^21.1.1",
-    "mastra": "^0.4.4",
-    "ts-pattern": "^5.2.0",
-    "zod": "^3.24.2",
-    "execa": "^9.3.0",
-    "ts-node": "^10.9.2",
-    "neverthrow": "^6.2.2",
     "@langchain/openai": "^0.2.5",
-    "langchain": "^0.2.11"
+    "@mastra/core": "^0.7.0",
+    "@mastra/github": "^1.1.20",
+    "@octokit/rest": "^21.1.1",
+    "execa": "^9.3.0",
+    "langchain": "^0.2.11",
+    "mastra": "^0.4.4",
+    "neverthrow": "^6.2.2",
+    "ts-node": "^10.9.2",
+    "ts-pattern": "^5.2.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",

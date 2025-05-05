@@ -22,8 +22,8 @@ export const execute = async (context: WorkflowContext): Promise<GenerateReportR
     codeQualityReview,
     performanceReview,
     securityReview,
-    testingReview
-  )
+    testingReview,
+  );
 
   const path = await writeReportToFile(report);
 
