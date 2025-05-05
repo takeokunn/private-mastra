@@ -11,8 +11,7 @@ import {
   testingAgent,
 } from "./agents";
 import { execute } from "./execute";
-
-type ReviewType = "summary" | "architecture" | "code_quality" | "performance" | "security" | "testing";
+import { ReviewType } from "@src/mastra/pr-reviewer/types";
 
 export const step = (reviewType: ReviewType) => {
   const id = match(reviewType)

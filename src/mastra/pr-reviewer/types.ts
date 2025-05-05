@@ -37,3 +37,5 @@ export type ReviewResponse = {
 export type GenerateReportResponse = {
   path: string;
 };
+
+export type ReviewType = "summary" | "architecture" | "code_quality" | "performance" | "security" | "testing";

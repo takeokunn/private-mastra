@@ -14,7 +14,7 @@ export const tool = createTool({
   inputSchema: z.object({
     owner: z.string(),
     repo: z.string(),
-    ref: z.string().optional(),
+    ref: z.string()
   }),
   execute: async ({ context }) => {
     const client = await github.getApiClient();
@@ -23,7 +23,7 @@ export const tool = createTool({
       path: {
         owner: context.owner,
         repo: context.repo,
-        ref: "heads/main",
+        ref: context.ref,
       },
     });
 
