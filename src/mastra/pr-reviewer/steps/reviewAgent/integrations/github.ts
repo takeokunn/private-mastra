@@ -10,7 +10,7 @@ const github = new GithubIntegration({
 
 export const tool = createTool({
   id: "github-integration",
-  description: "",
+  description: "github-integration tool",
   inputSchema: z.object({
     owner: z.string(),
     repo: z.string(),
