@@ -1,8 +1,4 @@
-import { google } from "@ai-sdk/google";
-import { Agent } from "@mastra/core/agent";
-import { tool as githubTool } from "../integrations/github";
-
-const instructions = `
+export const instructions = `
 # 命令
 
 Pull Requestの変更内容について、PRがどういう意図で作られたのかサマリを出力してください。
@@ -23,10 +19,3 @@ Pull Requestの変更内容について、PRがどういう意図で作られた
 [ファイル名、変更増減数(+/-)、変更内容をテーブル表記分かりやすく出力]
 \`\`\`
 `;
-
-export const agent = new Agent({
-  name: "Pull Request Agent",
-  instructions,
-  model: google("gemini-1.5-flash-latest"),
-  tools: { githubTool },
-});

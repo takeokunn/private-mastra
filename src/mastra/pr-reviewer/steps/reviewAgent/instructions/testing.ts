@@ -1,11 +1,8 @@
-import { google } from "@ai-sdk/google";
-import { Agent } from "@mastra/core/agent";
-import { tool as githubTool } from "../integrations/github";
-import { outputFormat } from "./output";
+import { outputFormat } from "./basic";
 
 const output = outputFormat("テスト・CI/CD整合性（Testing & Toolchain）")
 
-const instructions = `
+export const instructions = `
 # 命令
 
 テスト・CI/CD整合性（Testing & Toolchain）の観点からPull Requestをレビューしてください。
@@ -39,10 +36,3 @@ const instructions = `
 
 ${output}
 `;
-
-export const agent = new Agent({
-  name: "Pull Request Agent",
-  instructions,
-  model: google("gemini-1.5-flash-latest"),
-  tools: { githubTool },
-});

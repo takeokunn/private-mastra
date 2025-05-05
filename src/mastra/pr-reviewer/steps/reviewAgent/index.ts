@@ -1,17 +1,20 @@
+import { google } from "@ai-sdk/google";
+import { tool as githubTool } from "./integrations/github";
+import { Agent } from "@mastra/core/agent";
 import { Step } from "@mastra/core";
 import { match } from "ts-pattern";
 import { WORKFLOW } from "@src/mastra/pr-reviewer/const";
 import { fetchPullRequestOutputSchema, reviewAgentOutputSchema } from "../../schema";
-import {
-  architectureAgent,
-  codeQualityAgent,
-  performanceAgent,
-  securityAgent,
-  summaryAgent,
-  testingAgent,
-} from "./agents";
 import { execute } from "./execute";
-import { ReviewType } from "@src/mastra/pr-reviewer/types";
+import type { ReviewType } from "@src/mastra/pr-reviewer/types";
+import {
+  summaryInstructions,
+  architectureInstructions,
+  codeQualityInstructions,
+  performanceInstructions,
+  securityInstructions,
+  testingInstructions,
+} from './instructions'
 
 export const step = (reviewType: ReviewType) => {
   const id = match(reviewType)
@@ -23,14 +26,21 @@ export const step = (reviewType: ReviewType) => {
     .with("testing", () => WORKFLOW.REVIEW_AGENT.TESTING)
     .exhaustive();
 
-  const agent = match(reviewType)
-    .with("summary", () => summaryAgent)
-    .with("architecture", () => architectureAgent)
-    .with("code_quality", () => codeQualityAgent)
-    .with("performance", () => performanceAgent)
-    .with("security", () => securityAgent)
-    .with("testing", () => testingAgent)
+  const instructions = match(reviewType)
+    .with("summary", () => summaryInstructions)
+    .with("architecture", () => architectureInstructions)
+    .with("code_quality", () => codeQualityInstructions)
+    .with("performance", () => performanceInstructions)
+    .with("security", () => securityInstructions)
+    .with("testing", () => testingInstructions)
     .exhaustive();
+
+  const agent = new Agent({
+    name: "Pull Request Agent",
+    instructions,
+    model: google("gemini-1.5-flash-latest"),
+    tools: { githubTool },
+  });
 
   return new Step({
     id,

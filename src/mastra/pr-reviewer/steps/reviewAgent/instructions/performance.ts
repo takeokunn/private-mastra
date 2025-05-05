@@ -1,11 +1,8 @@
-import { google } from "@ai-sdk/google";
-import { Agent } from "@mastra/core/agent";
-import { tool as githubTool } from "../integrations/github";
-import { outputFormat } from "./output";
+import { outputFormat } from "./basic";
 
 const output = outputFormat("パフォーマンスとリソース効率（Performance & Resource Efficiency）")
 
-const instructions = `
+export const instructions = `
 # 命令
 
 Pull Requestの変更内容について、**パフォーマンスとリソース効率（Performance & Resource Efficiency）**の観点から詳細なコードレビューを行ってください。
@@ -46,10 +43,3 @@ Pull Requestの変更内容について、**パフォーマンスとリソース
 
 ${output}
 `;
-
-export const agent = new Agent({
-  name: "Pull Request Agent",
-  instructions,
-  model: google("gemini-1.5-flash-latest"),
-  tools: { githubTool },
-});

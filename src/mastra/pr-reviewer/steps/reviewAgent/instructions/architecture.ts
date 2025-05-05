@@ -1,11 +1,8 @@
-import { google } from "@ai-sdk/google";
-import { Agent } from "@mastra/core/agent";
-import { tool as githubTool } from "../integrations/github";
-import { outputFormat } from "./output";
+import { outputFormat } from "./basic";
 
 const output = outputFormat("設計・責務分離（Architecture & Modularity）")
 
-const instructions = `
+export const instructions = `
 # 命令
 
 このPull Requestを、 **設計・責務分離（Architecture & Modularity）** の観点からレビューしてください。
@@ -55,10 +52,3 @@ const instructions = `
 
 ${output}
 `;
-
-export const agent = new Agent({
-  name: "Pull Request Agent",
-  instructions,
-  model: google("gemini-1.5-flash-latest"),
-  tools: { githubTool },
-});

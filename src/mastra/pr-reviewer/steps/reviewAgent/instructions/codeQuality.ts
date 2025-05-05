@@ -1,11 +1,8 @@
-import { google } from "@ai-sdk/google";
-import { Agent } from "@mastra/core/agent";
-import { tool as githubTool } from "../integrations/github";
-import { outputFormat } from "./output";
+import { outputFormat } from "./basic";
 
 const output = outputFormat("コード品質および可読性（Style & Clean Code）")
 
-const instructions = `
+export const instructions = `
 # 命令
 
 コード品質および可読性（Style & Clean Code）の観点から、以下のPull Requestの変更内容をレビューしてください。
@@ -46,12 +43,3 @@ const instructions = `
 
 ${output}
 `;
-
-export const agent = new Agent({
-  name: "Pull Request Agent",
-  instructions,
-  model: google("gemini-1.5-flash-latest"),
-  tools: {
-    githubTool,
-  },
-});
