@@ -1,8 +1,6 @@
-import { outputFormat } from "./basic";
+import { basicFormat, outputFormat } from "./basic";
 
-const output = outputFormat("セキュリティ・安全性（Security）")
-
-export const instructions = `
+const instruction = `
 # 命令
 
 セキュリティ・安全性（Security）の観点からPull Requestをレビューしてください。
@@ -24,6 +22,12 @@ export const instructions = `
 - 潜在的なリスクや設計上の抜けについても、仮説ベースでも構いませんので必ずコメントを残してください。
 - 検出された問題が既知のセキュリティ原則（OWASP Top 10など）に該当する場合は、その分類も明示してください。
 - 必要に応じて githubTool を使い、PRの全体構成・Diff範囲外の周辺コードも確認してください。
+`
 
+const output = outputFormat("セキュリティ・安全性（Security）")
+
+export const instructions = `
+${basicFormat}
+${instruction}
 ${output}
 `;
