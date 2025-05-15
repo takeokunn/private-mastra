@@ -14,7 +14,7 @@ import {
   performanceInstructions,
   securityInstructions,
   testingInstructions,
-} from './instructions'
+} from "./instructions";
 
 export const step = (reviewType: ReviewType) => {
   const id = match(reviewType)

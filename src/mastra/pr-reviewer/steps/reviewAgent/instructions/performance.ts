@@ -51,9 +51,9 @@ Pull Requestの変更内容について、**パフォーマンスとリソース
 - **変更により既存の性能課題が助長・顕在化していないか**も注意深く検証してください。
 - **よくあるパフォーマンス・アンチパターン**（例：N+1、過剰なオブジェクト生成、不適切なキャッシュ戦略など）に積極的に言及してください。
 - 明確な問題がない場合でも、**改善余地や潜在リスクを建設的に提案**してください。
-- 必要に応じて githubTool を使用して、PRの全体構成やDiff範囲外の周辺コードも確認してください。`
+- 必要に応じて githubTool を使用して、PRの全体構成やDiff範囲外の周辺コードも確認してください。`;
 
-const output = outputFormat("パフォーマンスとリソース効率（Performance & Resource Efficiency）")
+const output = outputFormat("パフォーマンスとリソース効率（Performance & Resource Efficiency）");
 
 export const instructions = `
 ${basicFormat}

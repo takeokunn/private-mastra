@@ -4,7 +4,7 @@ const instruction = `
 # 命令
 
 Pull Requestの変更内容について、PRがどういう意図で作られたのかサマリを出力してください。
-`
+`;
 
 const output = `
 # 出力フォーマット（org）
@@ -22,7 +22,7 @@ const output = `
 
 [ファイル名、変更増減数(+/-)、変更内容をテーブル表記分かりやすく出力]
 \`\`\`
-`
+`;
 
 export const instructions = `
 ${basicFormat}

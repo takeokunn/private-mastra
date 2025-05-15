@@ -5,6 +5,7 @@ const generateMeta = (prDetails: PullRequestDetails): string => {
   return `#+TITLE: プルリクエストレビュー: ${prDetails.title}
 #+STARTUP: content
 #+STARTUP: fold
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://orgmode.org/worg/style/worg.css"/>
 #+DATE: ${reportDate}
 #+AUTHOR: AI レビューアシスタント (via prReviewerTool)
 #+PROPERTY: PR_URL ${prDetails.html_url}

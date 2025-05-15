@@ -83,7 +83,7 @@ Pull Request（PR）のレビューにおいては、基本的に「フル思考
 ---
 
 このテンプレートに則ることで、レビューの質・一貫性・建設性が大幅に向上します。チーム全体での合意形成やスキル継承にも寄与します。
-`
+`;
 
 export const outputFormat = (title: string) => {
   return `
@@ -105,5 +105,5 @@ export const outputFormat = (title: string) => {
 
 [提案を可能な限り箇条書きで出力]
 \`\`\`
-`
-}
+`;
+};

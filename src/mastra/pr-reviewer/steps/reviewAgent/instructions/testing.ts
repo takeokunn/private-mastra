@@ -39,9 +39,9 @@ Pull Requestを「テストおよびCI/CD整合性（Testing & Toolchain）」�
 
 - 「CIが通っている」だけでは不十分です。**将来の変更に対するテストの頑健性や、CIの信頼性の継続性**にも注意を払ってください。
 - テストコードやCIスクリプトの変更により、他チームや開発者体験に与える影響も考慮してください。
-`
+`;
 
-const output = outputFormat("テスト・CI/CD整合性（Testing & Toolchain）")
+const output = outputFormat("テスト・CI/CD整合性（Testing & Toolchain）");
 
 export const instructions = `
 ${basicFormat}

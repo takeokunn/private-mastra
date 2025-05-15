@@ -91,9 +91,9 @@ Pull Requestのコード変更に対して、**コード品質および可読性
 - **スタイルチェックではなく、文脈に即した「読みやすさ・意図の明確さ」を最重視**してください。
 - プロジェクトのコーディングスタイルとの整合性が取れていれば、必ずしも一般的なLint規則に従う必要はありません。
 - 必要に応じて githubTool などを使って、Diff外の周辺コードやファイル全体の構成も確認してください。
-`
+`;
 
-const output = outputFormat("コード品質および可読性（Style & Clean Code）")
+const output = outputFormat("コード品質および可読性（Style & Clean Code）");
 
 export const instructions = `
 ${basicFormat}

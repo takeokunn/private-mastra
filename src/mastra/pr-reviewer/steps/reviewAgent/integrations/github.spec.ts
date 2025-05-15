@@ -4,6 +4,6 @@ import { tool } from "./github";
 describe("github integration tool", () => {
   it("should have the correct id and description", () => {
     expect(tool.id).toBe("github-integration");
-    expect(tool.description).toBe('github-integration tool')
+    expect(tool.description).toBe("github-integration tool");
   });
 });

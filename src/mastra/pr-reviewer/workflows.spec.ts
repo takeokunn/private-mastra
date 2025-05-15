@@ -10,17 +10,17 @@ describe("pr-review workflow", () => {
   it("should contain the expected steps in order", () => {
     const steps = workflow.steps;
     // githubの情報取得
-    expect(steps[WORKFLOW.FETCH_PULL_REQUEST]).toBeDefined()
+    expect(steps[WORKFLOW.FETCH_PULL_REQUEST]).toBeDefined();
 
     // レビューエージェント
-    expect(steps[WORKFLOW.REVIEW_AGENT.SUMMARY]).toBeDefined()
-    expect(steps[WORKFLOW.REVIEW_AGENT.ARCHITECTURE]).toBeDefined()
-    expect(steps[WORKFLOW.REVIEW_AGENT.CODE_QUALITY]).toBeDefined()
-    expect(steps[WORKFLOW.REVIEW_AGENT.SECURITY]).toBeDefined()
-    expect(steps[WORKFLOW.REVIEW_AGENT.PERFORMANCE]).toBeDefined()
-    expect(steps[WORKFLOW.REVIEW_AGENT.TESTING]).toBeDefined()
+    expect(steps[WORKFLOW.REVIEW_AGENT.SUMMARY]).toBeDefined();
+    expect(steps[WORKFLOW.REVIEW_AGENT.ARCHITECTURE]).toBeDefined();
+    expect(steps[WORKFLOW.REVIEW_AGENT.CODE_QUALITY]).toBeDefined();
+    expect(steps[WORKFLOW.REVIEW_AGENT.SECURITY]).toBeDefined();
+    expect(steps[WORKFLOW.REVIEW_AGENT.PERFORMANCE]).toBeDefined();
+    expect(steps[WORKFLOW.REVIEW_AGENT.TESTING]).toBeDefined();
 
     // レポート作成
-    expect(steps[WORKFLOW.GENERATE_REPORT]).toBeDefined()
+    expect(steps[WORKFLOW.GENERATE_REPORT]).toBeDefined();
   });
 });

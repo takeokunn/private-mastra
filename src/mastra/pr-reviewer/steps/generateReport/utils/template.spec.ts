@@ -6,9 +6,9 @@ const MOCK_DATE = new Date("2025-05-06T10:00:00.000Z");
 vi.setSystemTime(MOCK_DATE);
 
 describe("generateOrgReport", () => {
-  it('fdsafas', () => {
-    expect(true).toBeTruthy()
-  })
+  it("fdsafas", () => {
+    expect(true).toBeTruthy();
+  });
 });
 
 // describe("generateOrgReport", () => {

@@ -67,9 +67,9 @@ const instruction = `
 - 設計の問題がPR外に起因している場合でも、その旨を明示し、改善の示唆を行ってください。
 - 小さな変更でも、**設計意図からの逸脱** や将来的な問題の兆候があれば、積極的に指摘してください。
 - 必要に応じて githubTool を使い、PRの全体構成やDiff範囲外の周辺コード・依存構造も確認してください。
-`
+`;
 
-const output = outputFormat("設計・責務分離（Architecture & Modularity）")
+const output = outputFormat("設計・責務分離（Architecture & Modularity）");
 
 export const instructions = `
 ${basicFormat}

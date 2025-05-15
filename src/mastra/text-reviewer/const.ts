@@ -1,3 +1,3 @@
 export const WORKFLOW = {
-  TEXT_REVIEWER: "text-reviewer"
+  TEXT_REVIEWER: "text-reviewer",
 };
