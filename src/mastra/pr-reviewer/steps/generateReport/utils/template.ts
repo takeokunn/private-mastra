@@ -3,7 +3,6 @@ import { PullRequestDetails } from "@src/mastra/pr-reviewer/types";
 const generateMeta = (prDetails: PullRequestDetails): string => {
   const reportDate = new Date().toISOString();
   return `#+TITLE: プルリクエストレビュー: ${prDetails.title}
-#+STARTUP: content
 #+STARTUP: fold
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://orgmode.org/worg/style/worg.css"/>
 #+DATE: ${reportDate}
